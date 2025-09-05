@@ -1,0 +1,20 @@
+{
+  "title": "投注仪表盘",
+  "football": "足球",
+  "basketball": "篮球",
+  "football_roi": "足球产出比",
+  "basketball_roi": "篮球产出比",
+  "football_comming_bets": "足球即将开始的比赛",
+  "basketball_comming_bets": "篮球即将开始的比赛",
+  "football_settled_bets": "足球已经结束的比赛",
+  "basketball_settled_bets": "篮球球已经结束的比赛",
+  "bet_table": {
+    "matchtime": "比赛时间",
+    "league": "赛事",
+    "home_team": "主队",
+    "away_team": "客队",
+    "betcontent": "投注内容",
+    "bettime": "投注时间",
+    "betresult": "投注结果"
+  }
+}

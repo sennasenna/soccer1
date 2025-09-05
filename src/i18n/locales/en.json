@@ -1,0 +1,21 @@
+{
+  "title": "Bet Dashboard",
+  "football": "football",
+  "basketball": "basketball",
+  "football_roi": "Football ROI",
+  "basketball_roi": "Basketball ROI",
+  "football_comming_bets": "Football Comming Bets",
+  "basketball_comming_bets": "Basketball Comming Bets",
+  "football_settled_bets": "Football Settled Bets",
+  "basketball_settled_bets": "Basketball Settled Bets",
+  "bet_table": {
+    "matchtime": "MatchTime",
+    "league": "League",
+    "home_team": "HomeTeam",
+    "away_team": "AwayTeam",
+    "betcontent": "BetContent",
+    "bettime": "BetTime",
+    "betresult": "BetResult"
+
+  }
+}
