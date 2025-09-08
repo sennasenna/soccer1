@@ -59,7 +59,7 @@
     </div>
 
     <div v-if="calculationResult" class="result-section">
-      <h3 class="result-title">计算结果</h3>
+      
 
       <div class="match-info">
         <div style="text-align: center; color: #666;">
