@@ -69,7 +69,10 @@
     "draw": "Draw",
     "away": "Away",
     "over": "Over",
-    "under": "Under"
+    "under": "Under",
+    "marketType": "Market",
+    "modelOdds": "Model Odds",
+    "margin": "Margin"
 
   },
   "league": {

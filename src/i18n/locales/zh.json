@@ -68,7 +68,10 @@
         "draw": "平局",
         "away": "客胜",
         "over": "大",
-        "under": "小"
+        "under": "小",
+        "marketType": "玩法",
+        "modelOdds": "模型赔率",
+        "margin": "Margin"
   },
   "league": {
     "English Premier League": "英格兰足球超级联赛",

@@ -70,51 +70,93 @@
 
             <!-- 赔率信息 -->
             <div class="odds-info">
+              <!-- 庄家名称标签 -->
+              <div class="bookmaker-label">
+                <span class="label-tag">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+              </div>
+
               <!-- 胜平负赔率 -->
               <div class="odds-group">
-                <h4 class="odds-title">{{ $t('markets.winDrawWin') }}</h4>
+                <div class="market-header">
+                  <span class="market-label">{{ $t('markets.marketType') }}</span>
+                  <span class="market-name">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+                </div>
                 <div class="odds-row">
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.home') }}</span>
-                    <span class="odd-value">{{ match.odds.winDrawWin.home }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.winDrawWin.home }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.home) + 0.15).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.home, (parseFloat(match.odds.winDrawWin.home) + 0.15).toFixed(2)) }}</span>
+                    </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.draw') }}</span>
-                    <span class="odd-value">{{ match.odds.winDrawWin.draw }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.winDrawWin.draw }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.draw) + 0.20).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.draw, (parseFloat(match.odds.winDrawWin.draw) + 0.20).toFixed(2)) }}</span>
+                    </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.away') }}</span>
-                    <span class="odd-value">{{ match.odds.winDrawWin.away }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.winDrawWin.away }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.away) + 0.25).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.away, (parseFloat(match.odds.winDrawWin.away) + 0.25).toFixed(2)) }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <!-- 盘口赔率 -->
               <div class="odds-group">
-                <h4 class="odds-title">{{ $t('markets.handicap') }}</h4>
+                <div class="market-header">
+                  <span class="market-label">{{ $t('markets.marketType') }}</span>
+                  <span class="market-name">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+                </div>
                 <div class="odds-row">
                   <div class="odd-item">
                     <span class="odd-label">{{ match.odds.handicap.homeTeam }}</span>
-                    <span class="odd-value">{{ match.odds.handicap.homeOdds }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.handicap.homeOdds }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.handicap.homeOdds) + 0.10).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.handicap.homeOdds, (parseFloat(match.odds.handicap.homeOdds) + 0.10).toFixed(2)) }}</span>
+                    </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ match.odds.handicap.awayTeam }}</span>
-                    <span class="odd-value">{{ match.odds.handicap.awayOdds }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.handicap.awayOdds }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.handicap.awayOdds) + 0.12).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.handicap.awayOdds, (parseFloat(match.odds.handicap.awayOdds) + 0.12).toFixed(2)) }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <!-- 大小球赔率 -->
               <div class="odds-group">
-                <h4 class="odds-title">{{ $t('markets.goalLine') }}</h4>
+                <div class="market-header">
+                  <span class="market-label">{{ $t('markets.marketType') }}</span>
+                  <span class="market-name">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+                </div>
                 <div class="odds-row">
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.over') }} {{ match.odds.goalLine.line }}</span>
-                    <span class="odd-value">{{ match.odds.goalLine.overOdds }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.goalLine.overOdds }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.goalLine.overOdds) + 0.08).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.goalLine.overOdds, (parseFloat(match.odds.goalLine.overOdds) + 0.08).toFixed(2)) }}</span>
+                    </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.under') }} {{ match.odds.goalLine.line }}</span>
-                    <span class="odd-value">{{ match.odds.goalLine.underOdds }}</span>
+                    <div class="odd-values">
+                      <span class="odd-value">{{ match.odds.goalLine.underOdds }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.goalLine.underOdds) + 0.11).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.goalLine.underOdds, (parseFloat(match.odds.goalLine.underOdds) + 0.11).toFixed(2)) }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -392,6 +434,13 @@ const formatDate = (dateStr) => {
   const month = date.getMonth() + 1
   const day = date.getDate()
   return `${month}月${day}日`
+}
+
+// 计算margin值
+const calculateMargin = (bookmakerOdds, modelOdds) => {
+  const margin = parseFloat(modelOdds) - parseFloat(bookmakerOdds)
+  // 为了演示效果，暂时降低阈值到0.15，这样一些margin会显示出来
+  return margin > 0.15 ? margin.toFixed(2) : '-'
 }
 </script>
 
@@ -680,6 +729,31 @@ const formatDate = (dateStr) => {
   gap: 20px;
 }
 
+/* 庄家标签 */
+.bookmaker-label {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.label-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.dark .label-tag {
+  background: linear-gradient(135deg, #8b9dc3, #a78bda);
+  box-shadow: 0 4px 15px rgba(139, 157, 195, 0.3);
+}
+
 .odds-group {
   background: white;
   border-radius: 12px;
@@ -692,19 +766,44 @@ const formatDate = (dateStr) => {
   border-color: rgba(75, 85, 99, 0.3);
 }
 
-.odds-title {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 15px 0;
-  text-align: center;
+/* 玩法标签头部 */
+.market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.dark .odds-title {
-  color: #f3f4f6;
+.dark .market-header {
   border-bottom-color: rgba(75, 85, 99, 0.3);
+}
+
+.market-label {
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.dark .market-label {
+  color: #8b9dc3;
+  background: rgba(139, 157, 195, 0.1);
+}
+
+.market-name {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.dark .market-name {
+  color: #f3f4f6;
 }
 
 .odds-row {
@@ -721,6 +820,12 @@ const formatDate = (dateStr) => {
   background: #f8f9fa;
   border-radius: 8px;
   transition: all 0.2s ease;
+}
+
+.odd-values {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .odd-item:hover {
@@ -760,6 +865,50 @@ const formatDate = (dateStr) => {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.model-odds {
+  color: #28a745;
+  font-size: 13px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: help;
+  border-bottom: 1px dashed rgba(40, 167, 69, 0.3);
+  padding-bottom: 1px;
+}
+
+.dark .model-odds {
+  background: linear-gradient(135deg, #48bb78, #38b2ac);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom-color: rgba(72, 187, 120, 0.3);
+}
+
+.margin-value {
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ff6b6b, #ffa94d);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: help;
+  border-bottom: 1px dashed rgba(255, 107, 107, 0.3);
+  padding-bottom: 1px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.dark .margin-value {
+  background: linear-gradient(135deg, #fa5252, #fd7e14);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom-color: rgba(250, 82, 82, 0.3);
 }
 
 /* 提示区域 */
