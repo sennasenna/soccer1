@@ -10,8 +10,8 @@ export const LanguageStore = defineStore('LanguageStore', () => {
     const changeLanguage = (newLocale) => {
         currentLocale.value = newLocale
         //localStorage.setItem('locale', newLocale)
-  }
-
-  return { currentLocale, changeLanguage }
+    }
+ 
+    return { currentLocale, changeLanguage }
 
 })

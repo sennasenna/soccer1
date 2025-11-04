@@ -12,10 +12,29 @@
   "comparison": {
     "title": "Odds Comparison",
     "description": "Odds comparison feature currently under development, providing you with comprehensive market analysis and optimal odds recommendations.",
+    "selectLeague": "Select League",
+    "selectLeaguePlaceholder": "Please select a league",
+    "selectBookmaker": "Select Bookmaker",
+    "selectBookmakerPlaceholder": "Please select a bookmaker",
+    "selectedLeague": "Selected League",
+    "selectedBookmaker": "Selected Bookmaker",
+    "comparisonDescription": "You will be able to compare odds from different bookmakers and find the best choices.",
+    "readyForComparison": "✨ Ready for odds comparison",
     "feature1": "Multi-platform odds comparison",
+    "feature1Desc": "Display odds from multiple bookmakers simultaneously to help you quickly find the highest odds",
     "feature2": "Real-time odds change tracking",
+    "feature2Desc": "Monitor real-time odds changes and never miss favorable betting opportunities",
     "feature3": "Historical data analysis",
-    "comingSoon": "Coming Soon"
+    "feature3Desc": "Analyze historical odds trends to provide data support for your betting decisions",
+    "feature4": "Smart betting recommendations",
+    "feature4Desc": "Provide optimal betting suggestions and strategies based on data analysis",
+    "comingSoon": "Coming Soon",
+    "comingSoonDesc": "Odds comparison feature is under active development, stay tuned for more exciting features"
+  },
+  "bookmakers": {
+    "bet365": "Bet365",
+    "sbo": "SBO",
+    "ibc": "IBC"
   },
   "markets": {
     "LEAGUE": "LEAGUE",

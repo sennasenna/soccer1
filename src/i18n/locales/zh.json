@@ -12,10 +12,29 @@
   "comparison": {
     "title": "赔率比较",
     "description": "正在开发中的赔率比较功能，将为您提供更全面的市场分析和最优赔率推荐。",
+    "selectLeague": "选择联赛",
+    "selectLeaguePlaceholder": "请选择一个联赛",
+    "selectBookmaker": "选择庄家",
+    "selectBookmakerPlaceholder": "请选择庄家",
+    "selectedLeague": "已选择联赛",
+    "selectedBookmaker": "已选择庄家",
+    "comparisonDescription": "您将能够比较不同博彩平台的赔率，找到最优选择。",
+    "readyForComparison": "✨ 已准备好进行赔率比较",
     "feature1": "多平台赔率对比",
+    "feature1Desc": "同时显示多个博彩平台的赔率信息，帮您快速找到最高赔率",
     "feature2": "实时赔率变化追踪",
+    "feature2Desc": "监控赔率实时变化，不错过任何有利的投注时机",
     "feature3": "历史数据分析",
-    "comingSoon": "即将推出"
+    "feature3Desc": "分析历史赔率趋势，为您的投注决策提供数据支持",
+    "feature4": "智能投注推荐",
+    "feature4Desc": "基于数据分析为您提供最优的投注建议和策略",
+    "comingSoon": "即将推出",
+    "comingSoonDesc": "赔率比较功能正在加紧开发中，敬请期待更多精彩功能"
+  },
+  "bookmakers": {
+    "bet365": "Bet365",
+    "sbo": "SBO",
+    "ibc": "IBC"
   },
   "markets": {
         "LEAGUE": "选择联赛",
