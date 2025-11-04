@@ -20,6 +20,13 @@
     "selectedBookmaker": "已选择庄家",
     "comparisonDescription": "您将能够比较不同博彩平台的赔率，找到最优选择。",
     "readyForComparison": "✨ 已准备好进行赔率比较",
+    "upcomingMatches": "未来赛程",
+    "bookmakerOdds": "{bookmaker} 赔率",
+    "selectPromptTitle": "开始赔率比较",
+    "selectPromptDesc": "选择联赛和庄家来查看赔率比较信息",
+    "step1": "选择您关注的联赛",
+    "step2": "选择要比较的庄家",
+    "step3": "查看详细赔率对比",
     "feature1": "多平台赔率对比",
     "feature1Desc": "同时显示多个博彩平台的赔率信息，帮您快速找到最高赔率",
     "feature2": "实时赔率变化追踪",
@@ -47,20 +54,32 @@
         "Instructions": "说明",
         "STEP1": "1. 选择联赛",
         "STEP2": "2. 选择主客队(应该为不同的球队)",
-        "STEP3": "3. 点击“计算",
+        "STEP3": "3. 点击计算",
         "Warning": "警告：主客队应为不同的球队!",
 
         "1X2": "胜平负",
         "Asia Handicap": "亚洲盘",
         "Goal Line": "大小球",
-        "open time": "计算时间"
+        "open time": "计算时间",
+        "winDrawWin": "胜平负",
+        "handicap": "亚洲盘口",
+        "goalLine": "大小球",
+        "home": "主胜",
+        "draw": "平局",
+        "away": "客胜",
+        "over": "大",
+        "under": "小"
   },
   "league": {
     "English Premier League": "英格兰足球超级联赛",
     "France Ligue I": "法国足球甲级联赛",
     "Germany Bundesliga": "德国足球甲级联赛",
     "Italy Serie A": "意大利足球甲级联赛",
-    "Spain Primera Liga": "西班牙足球甲级联赛"
+    "Spain Primera Liga": "西班牙足球甲级联赛",
+    "英超": "英超",
+    "西甲": "西甲",
+    "德甲": "德甲",
+    "意甲": "意甲"
   },
   "teams": {
     "English Premier League": {

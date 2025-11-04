@@ -20,6 +20,13 @@
     "selectedBookmaker": "Selected Bookmaker",
     "comparisonDescription": "You will be able to compare odds from different bookmakers and find the best choices.",
     "readyForComparison": "✨ Ready for odds comparison",
+    "upcomingMatches": "Upcoming Matches",
+    "bookmakerOdds": "{bookmaker} Odds",
+    "selectPromptTitle": "Start Odds Comparison",
+    "selectPromptDesc": "Select league and bookmaker to view odds comparison information",
+    "step1": "Select the league you're interested in",
+    "step2": "Choose bookmaker to compare",
+    "step3": "View detailed odds comparison",
     "feature1": "Multi-platform odds comparison",
     "feature1Desc": "Display odds from multiple bookmakers simultaneously to help you quickly find the highest odds",
     "feature2": "Real-time odds change tracking",
@@ -54,7 +61,15 @@
     "1X2": "1X2",
     "Asia Handicap": "Asia Handicap",
     "Goal Line": "Goal Line",
-    "open time": "open time"
+    "open time": "open time",
+    "winDrawWin": "Win Draw Win",
+    "handicap": "Handicap",
+    "goalLine": "Goal Line",
+    "home": "Home",
+    "draw": "Draw",
+    "away": "Away",
+    "over": "Over",
+    "under": "Under"
 
   },
   "league": {
@@ -62,7 +77,11 @@
     "France Ligue I": "France Ligue I",
     "Germany Bundesliga": "Germany Bundesliga",
     "Italy Serie A": "Italy Serie A",
-    "Spain Primera Liga": "Spain Primera Liga"
+    "Spain Primera Liga": "Spain Primera Liga",
+    "英超": "Premier League",
+    "西甲": "La Liga",
+    "德甲": "Bundesliga",
+    "意甲": "Serie A"
   },
   "teams": {
     "English Premier League": {

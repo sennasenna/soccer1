@@ -109,11 +109,7 @@
               </div>
             </div>
 
-            <div class="open-time">
-              <span class="open-time">{{ $t('markets.open time') }}:&nbsp&nbsp</span>
-              <span class="open-time">{{ calculationResult.update_time }}</span>
-            </div>
-
+  
           </div>
         </div>
       </div>
