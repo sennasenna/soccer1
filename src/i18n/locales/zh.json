@@ -4,6 +4,19 @@
     "Switch to Light Mode": "切换到亮色模式",
     "Switch to Dark Mode": "切换到暗色模式"
   },
+  "sidebar": {
+    "title": "足球赔率",
+    "calculator": "模型计算",
+    "comparison": "赔率比较"
+  },
+  "comparison": {
+    "title": "赔率比较",
+    "description": "正在开发中的赔率比较功能，将为您提供更全面的市场分析和最优赔率推荐。",
+    "feature1": "多平台赔率对比",
+    "feature2": "实时赔率变化追踪",
+    "feature3": "历史数据分析",
+    "comingSoon": "即将推出"
+  },
   "markets": {
         "LEAGUE": "选择联赛",
         "HOME TEAM": "主队",

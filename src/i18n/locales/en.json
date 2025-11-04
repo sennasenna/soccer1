@@ -4,6 +4,19 @@
     "Switch to Light Mode": "Switch to Light Mode",
     "Switch to Dark Mode": "Switch to Dark Mode"
   },
+  "sidebar": {
+    "title": "Soccer Odds",
+    "calculator": "Model Calculator",
+    "comparison": "Odds Comparison"
+  },
+  "comparison": {
+    "title": "Odds Comparison",
+    "description": "Odds comparison feature currently under development, providing you with comprehensive market analysis and optimal odds recommendations.",
+    "feature1": "Multi-platform odds comparison",
+    "feature2": "Real-time odds change tracking",
+    "feature3": "Historical data analysis",
+    "comingSoon": "Coming Soon"
+  },
   "markets": {
     "LEAGUE": "LEAGUE",
     "HOME TEAM": "HOME TEAM",
