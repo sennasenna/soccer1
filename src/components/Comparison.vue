@@ -233,7 +233,11 @@ const loadOddsData = async () => {
     return
   }
 
+  console.log('Loading odds data for bookmaker:', selectedBookmaker.value, 'ID:', bookmakerId)
+  console.log('Schedule data length:', scheduleData.value.length)
+
   oddsData.value = await oddsStore.fetchOddsForMatches(scheduleData.value, bookmakerId)
+  console.log('Final odds data:', oddsData.value)
 }
 
 // 监听联赛变化，重新加载赛程数据
@@ -261,6 +265,8 @@ const upcomingMatches = computed(() => {
     const matchTime = new Date(match.match_time)
     const realOdds = oddsData.value[match.match_id]
 
+    console.log('Processing match:', match.match_id, 'has odds:', !!realOdds)
+
     return {
       id: match.match_id,
       date: matchTime.toISOString().split('T')[0], // 格式化为 YYYY-MM-DD
@@ -272,7 +278,7 @@ const upcomingMatches = computed(() => {
       rawHomeTeam: match.home_team,
       rawAwayTeam: match.away_team,
       rawLeague: match.league,
-      // 使用真实赔率数据，如果没有则使用示例赔率
+      // 使用真实赔率数据，如果没有则使用示例赔率作为后备
       odds: realOdds ? oddsStore.formatOddsData(realOdds) : generateSampleOdds(match.home_team, match.away_team)
     }
   })
@@ -287,39 +293,26 @@ const upcomingMatches = computed(() => {
   return sortedMatches
 })
 
-// 生成示例赔率数据（暂时使用，后续可以连接真实的赔率API）
+// 生成示例赔率数据（当真实赔率数据不可用时的后备选项）
 function generateSampleOdds(homeTeam, awayTeam) {
-  // 基于队伍名称生成随机赔率（保持一致性）
-  const homeTeamHash = homeTeam.split('').reduce((a, b) => a + b.charCodeAt(0), 0)
-  const awayTeamHash = awayTeam.split('').reduce((a, b) => a + b.charCodeAt(0), 0)
-  const matchHash = homeTeamHash + awayTeamHash
-
-  // 使用哈希值生成稳定的"随机"赔率
-  const seed = matchHash % 100
-
-  const baseHomeOdds = 1.5 + (seed % 50) / 100  // 1.50 - 2.00
-  const baseDrawOdds = 3.0 + (seed % 60) / 100  // 3.00 - 3.60
-  const baseAwayOdds = 2.5 + (seed % 70) / 100  // 2.50 - 3.20
-
-  const handicapLine = ((seed % 11) - 5) / 2  // -2.5 到 2.5
-  const goalLine = 2.0 + (seed % 8) / 4  // 2.0 到 3.75
+  console.warn('Using sample odds for match:', homeTeam, 'vs', awayTeam, '- No real odds data available')
 
   return {
     winDrawWin: {
-      home: baseHomeOdds.toFixed(2),
-      draw: baseDrawOdds.toFixed(2),
-      away: baseAwayOdds.toFixed(2)
+      home: '1.85',
+      draw: '3.50',
+      away: '4.20'
     },
     handicap: {
-      homeTeam: handicapLine >= 0 ? `主队 +${handicapLine.toFixed(1)}` : `主队 ${handicapLine.toFixed(1)}`,
-      homeOdds: (1.85 + (seed % 20) / 100).toFixed(2),
-      awayTeam: handicapLine >= 0 ? `客队 -${handicapLine.toFixed(1)}` : `客队 +${Math.abs(handicapLine).toFixed(1)}`,
-      awayOdds: (1.85 + (seed % 20) / 100).toFixed(2)
+      homeTeam: '主队 0',
+      homeOdds: '1.90',
+      awayTeam: '客队 0',
+      awayOdds: '1.90'
     },
     goalLine: {
-      line: goalLine.toFixed(1),
-      overOdds: (1.80 + (seed % 25) / 100).toFixed(2),
-      underOdds: (1.95 + (seed % 25) / 100).toFixed(2)
+      line: '2.5',
+      overOdds: '1.85',
+      underOdds: '2.05'
     }
   }
 }

@@ -36,9 +36,11 @@ export const OddsStore = defineStore('odds', () => {
   // 获取多个比赛的赔率数据
   const fetchOddsForMatches = async (matches, bookmakerId) => {
     try {
-      if (!matches || matches.length === 0) return []
+      if (!matches || matches.length === 0) return {}
+      if (!bookmakerId) return {}
 
       const matchIds = matches.map(match => match.match_id || match.id)
+      console.log('Fetching odds for matchIds:', matchIds, 'bookmakerId:', bookmakerId)
 
       let query = supabase
         .from('odds')
@@ -50,8 +52,10 @@ export const OddsStore = defineStore('odds', () => {
 
       if (error) {
         console.error('Error fetching odds for matches:', error)
-        return []
+        return {}
       }
+
+      console.log('Odds data received:', data)
 
       // 按match_id分组，只保留每个比赛的最新赔率
       const oddsMap = {}
@@ -64,6 +68,7 @@ export const OddsStore = defineStore('odds', () => {
         })
       }
 
+      console.log('Processed odds map:', oddsMap)
       return oddsMap
     } catch (err) {
       console.error('Unexpected error:', err)
