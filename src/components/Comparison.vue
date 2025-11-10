@@ -71,11 +71,11 @@
               </div>
               <div class="match-teams">
                 <div class="team home-team">
-                  <span class="team-name">{{ $t('teams.' + match.rawLeague + '["' + match.rawHomeTeam + '"]', match.rawHomeTeam) }}</span>
+                  <span class="team-name">{{ getTeamName(match.rawLeague, match.rawHomeTeam) }}</span>
                 </div>
                 <div class="vs-separator">VS</div>
                 <div class="team away-team">
-                  <span class="team-name">{{ $t('teams.' + match.rawLeague + '["' + match.rawAwayTeam + '"]', match.rawAwayTeam) }}</span>
+                  <span class="team-name">{{ getTeamName(match.rawLeague, match.rawAwayTeam) }}</span>
                 </div>
               </div>
             </div>
@@ -205,6 +205,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ScheduleStore } from '@/store/Schedule'
 import { OddsStore, Converter } from '@/store/Odds'
 
@@ -219,6 +220,19 @@ const hasData = ref(false) // 是否已加载数据
 // Store 实例
 const scheduleStore = ScheduleStore()
 const oddsStore = OddsStore()
+
+// i18n
+const { t } = useI18n()
+
+// 获取球队名称的翻译
+const getTeamName = (league, teamName) => {
+  try {
+    return t(`teams.${league}.${teamName}`)
+  } catch (error) {
+    // 如果找不到翻译，返回原始名称
+    return teamName
+  }
+}
 
 
 
@@ -297,9 +311,9 @@ const upcomingMatches = computed(() => {
             away: euroOdds[2].toFixed(2)
           },
           handicap: {
-            homeTeam: `主队 ${asianOdds[0] >= 0 ? '+' : ''}${asianOdds[0].toFixed(1)}`,
+            homeTeam: `${getTeamName(match.league, match.home_team)} ${asianOdds[0] >= 0 ? '+' : ''}${asianOdds[0].toFixed(1)}`,
             homeOdds: asianOdds[1].toFixed(2),
-            awayTeam: `客队 ${asianOdds[0] <= 0 ? '+' : ''}${(-asianOdds[0]).toFixed(1)}`,
+            awayTeam: `${getTeamName(match.league, match.away_team)} ${asianOdds[0] <= 0 ? '+' : ''}${(-asianOdds[0]).toFixed(1)}`,
             awayOdds: asianOdds[2].toFixed(2)
           },
           goalLine: {
@@ -321,9 +335,9 @@ const upcomingMatches = computed(() => {
         away: match.lose.toFixed(2)
       },
       handicap: {
-        homeTeam: match.handicap >= 0 ? `主队 +${match.handicap.toFixed(1)}` : `主队 ${match.handicap.toFixed(1)}`,
+        homeTeam: match.handicap >= 0 ? `${getTeamName(match.league, match.home_team)} +${match.handicap.toFixed(1)}` : `${getTeamName(match.league, match.home_team)} ${match.handicap.toFixed(1)}`,
         homeOdds: match.home.toFixed(2),
-        awayTeam: match.handicap >= 0 ? `客队 -${match.handicap.toFixed(1)}` : `客队 +${Math.abs(match.handicap).toFixed(1)}`,
+        awayTeam: match.handicap >= 0 ? `${getTeamName(match.league, match.away_team)} -${match.handicap.toFixed(1)}` : `${getTeamName(match.league, match.away_team)} +${Math.abs(match.handicap).toFixed(1)}`,
         awayOdds: match.away.toFixed(2)
       },
       goalLine: {
