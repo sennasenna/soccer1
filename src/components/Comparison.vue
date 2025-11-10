@@ -39,10 +39,22 @@
             <p>{{ $t('comparison.readyForComparison') }}</p>
           </div>
         </div>
+
+        <!-- 确定按钮 -->
+        <div v-if="selectedLeague && selectedBookmaker" class="action-section">
+          <button
+            class="fetch-data-btn"
+            @click="fetchComparisonData"
+            :disabled="isLoading"
+          >
+            <span v-if="!isLoading">{{ $t('comparison.fetchData') }}</span>
+            <span v-else>{{ $t('comparison.loading') }}...</span>
+          </button>
+        </div>
       </div>
 
       <!-- 赔率比较内容区域 -->
-      <div v-if="selectedLeague && selectedBookmaker" class="odds-comparison-section">
+      <div v-if="selectedLeague && selectedBookmaker && hasData" class="odds-comparison-section">
         <div class="section-header">
           <h3>{{ $t('comparison.upcomingMatches') }}</h3>
           <p>{{ $t('comparison.bookmakerOdds', { bookmaker: $t('bookmakers.' + selectedBookmaker) }) }}</p>
@@ -201,6 +213,8 @@ const selectedBookmaker = ref('')
 const leagues = ref([])
 const scheduleData = ref([])
 const oddsData = ref({}) // 存储赔率数据
+const isLoading = ref(false) // 加载状态
+const hasData = ref(false) // 是否已加载数据
 
 // Store 实例
 const scheduleStore = ScheduleStore()
@@ -240,14 +254,48 @@ const loadOddsData = async () => {
   console.log('Final odds data:', oddsData.value)
 }
 
-// 监听联赛变化，重新加载赛程数据
-watch(selectedLeague, loadScheduleData, { immediate: true })
+// 获取比较数据的主函数
+const fetchComparisonData = async () => {
+  if (!selectedLeague.value || !selectedBookmaker.value) {
+    return
+  }
 
-// 监听庄家变化，重新加载赔率数据
-watch(selectedBookmaker, loadOddsData, { immediate: true })
+  isLoading.value = true
+  hasData.value = false
+  scheduleData.value = []
+  oddsData.value = {}
 
-// 监听赛程数据变化，重新加载赔率数据
-watch(scheduleData, loadOddsData, { immediate: true })
+  try {
+    console.log('开始获取比较数据...')
+    console.log('联赛:', selectedLeague.value)
+    console.log('庄家:', selectedBookmaker.value)
+
+    // 1. 获取赛程数据
+    console.log('正在加载赛程数据...')
+    const schedule = await scheduleStore.fetchScheduleByLeague(selectedLeague.value)
+    scheduleData.value = schedule
+    console.log('赛程数据加载完成:', schedule.length, '场比赛')
+
+    // 2. 获取赔率数据
+    if (schedule.length > 0) {
+      console.log('正在加载赔率数据...')
+      const bookmakerId = oddsStore.getBookmakerId(selectedBookmaker.value)
+      if (bookmakerId) {
+        const odds = await oddsStore.fetchOddsForMatches(schedule, bookmakerId)
+        oddsData.value = odds
+        console.log('赔率数据加载完成:', Object.keys(odds).length, '场比赛有赔率数据')
+      }
+    }
+
+    hasData.value = true
+    console.log('数据获取完成！')
+
+  } catch (error) {
+    console.error('获取比较数据时出错:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
 
 // 根据选择的联赛和庄家过滤数据
 const upcomingMatches = computed(() => {
@@ -332,20 +380,26 @@ async function loadBookmakers() {
   }))
 }
 
-// 组件挂载时加载联赛、庄家和赛程数据
+// 组件挂载时只加载基础数据（联赛和庄家列表）
 onMounted(async () => {
   await loadLeagues()
   await loadBookmakers()
-  await loadScheduleData()
 })
 
 const onLeagueChange = () => {
   console.log('Selected league for comparison:', selectedLeague.value)
-  // 赛程数据会通过 watch 自动加载
+  // 重置数据状态，等待用户点击确定按钮
+  hasData.value = false
+  scheduleData.value = []
+  oddsData.value = {}
 }
 
 const onBookmakerChange = () => {
   console.log('Selected bookmaker for comparison:', selectedBookmaker.value)
+  // 重置数据状态，等待用户点击确定按钮
+  hasData.value = false
+  scheduleData.value = []
+  oddsData.value = {}
 }
 
 // 日期格式化函数
@@ -500,6 +554,43 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
   font-weight: 600;
   margin: 0;
   font-size: 16px;
+}
+
+/* 确定按钮区域 */
+.action-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.fetch-data-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.fetch-data-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.fetch-data-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.fetch-data-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 /* 赔率比较内容区域 */
