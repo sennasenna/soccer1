@@ -59,11 +59,11 @@
               </div>
               <div class="match-teams">
                 <div class="team home-team">
-                  <span class="team-name">{{ match.homeTeam }}</span>
+                  <span class="team-name">{{ $t('teams.' + match.rawLeague + '["' + match.rawHomeTeam + '"]', match.rawHomeTeam) }}</span>
                 </div>
                 <div class="vs-separator">VS</div>
                 <div class="team away-team">
-                  <span class="team-name">{{ match.awayTeam }}</span>
+                  <span class="team-name">{{ $t('teams.' + match.rawLeague + '["' + match.rawAwayTeam + '"]', match.rawAwayTeam) }}</span>
                 </div>
               </div>
             </div>
@@ -192,12 +192,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { LeaguesStore } from '@/store/Leagues'
+import { ScheduleStore } from '@/store/Schedule'
 
 const selectedLeague = ref('')
 const selectedBookmaker = ref('')
 const leagues = ref([])
+const scheduleData = ref([])
+
+// Schedule store 实例
+const scheduleStore = ScheduleStore()
 
 // 庄家数据
 const bookmakers = ref([
@@ -206,149 +211,18 @@ const bookmakers = ref([
   { id: 'ibc', name: 'IBC' }
 ])
 
-// 联赛名称映射 - 支持中英文
-const leagueNameMapping = {
-  'English Premier League': '英超',
-  'Spain Primera Liga': '西甲',
-  'Germany Bundesliga': '德甲',
-  'Italy Serie A': '意甲',
-  '英超': '英超',
-  '西甲': '西甲',
-  '德甲': '德甲',
-  '意甲': '意甲'
+
+// 获取赛程数据
+const loadScheduleData = async () => {
+  if (selectedLeague.value) {
+    scheduleData.value = await scheduleStore.fetchScheduleByLeague(selectedLeague.value)
+  } else {
+    scheduleData.value = await scheduleStore.fetchUpcomingSchedule(7) // 获取未来7天的赛程
+  }
 }
 
-// 假数据 - 未来赛程和赔率
-const mockMatchesData = {
-  '英超': [
-    {
-      id: 1,
-      date: '2024-11-09',
-      time: '20:00',
-      homeTeam: '曼城',
-      awayTeam: '利物浦',
-      odds: {
-        winDrawWin: { home: '1.85', draw: '3.60', away: '4.20' },
-        handicap: { homeTeam: '曼城 -0.5', homeOdds: '1.95', awayTeam: '利物浦 +0.5', awayOdds: '1.85' },
-        goalLine: { line: '2.5', overOdds: '1.80', underOdds: '2.00' }
-      }
-    },
-    {
-      id: 2,
-      date: '2024-11-10',
-      time: '22:00',
-      homeTeam: '阿森纳',
-      awayTeam: '切尔西',
-      odds: {
-        winDrawWin: { home: '2.10', draw: '3.40', away: '3.20' },
-        handicap: { homeTeam: '阿森纳 0', homeOdds: '1.90', awayTeam: '切尔西 0', awayOdds: '1.90' },
-        goalLine: { line: '2.5', overOdds: '1.75', underOdds: '2.05' }
-      }
-    },
-    {
-      id: 3,
-      date: '2024-11-11',
-      time: '01:30',
-      homeTeam: '曼联',
-      awayTeam: '热刺',
-      odds: {
-        winDrawWin: { home: '2.05', draw: '3.50', away: '3.30' },
-        handicap: { homeTeam: '曼联 0', homeOdds: '1.88', awayTeam: '热刺 0', awayOdds: '1.92' },
-        goalLine: { line: '2.75', overOdds: '1.82', underOdds: '1.98' }
-      }
-    }
-  ],
-  '西甲': [
-    {
-      id: 4,
-      date: '2024-11-09',
-      time: '23:00',
-      homeTeam: '皇家马德里',
-      awayTeam: '巴塞罗那',
-      odds: {
-        winDrawWin: { home: '1.75', draw: '3.80', away: '4.50' },
-        handicap: { homeTeam: '皇马 -0.75', homeOdds: '2.00', awayTeam: '巴萨 +0.75', awayOdds: '1.80' },
-        goalLine: { line: '3.0', overOdds: '1.85', underOdds: '1.95' }
-      }
-    },
-    {
-      id: 5,
-      date: '2024-11-10',
-      time: '03:00',
-      homeTeam: '马德里竞技',
-      awayTeam: '塞维利亚',
-      odds: {
-        winDrawWin: { home: '1.65', draw: '3.60', away: '5.20' },
-        handicap: { homeTeam: '马竞 -1.0', homeOdds: '2.05', awayTeam: '塞维利亚 +1.0', awayOdds: '1.75' },
-        goalLine: { line: '2.25', overOdds: '1.78', underOdds: '2.02' }
-      }
-    }
-  ],
-  '德甲': [
-    {
-      id: 6,
-      date: '2024-11-09',
-      time: '22:30',
-      homeTeam: '拜仁慕尼黑',
-      awayTeam: '多特蒙德',
-      odds: {
-        winDrawWin: { home: '1.55', draw: '4.20', away: '5.80' },
-        handicap: { homeTeam: '拜仁 -1.25', homeOdds: '2.10', awayTeam: '多特 +1.25', awayOdds: '1.70' },
-        goalLine: { line: '3.5', overOdds: '1.92', underOdds: '1.88' }
-      }
-    },
-    {
-      id: 7,
-      date: '2024-11-10',
-      time: '01:00',
-      homeTeam: '勒沃库森',
-      awayTeam: 'RB莱比锡',
-      odds: {
-        winDrawWin: { home: '1.95', draw: '3.70', away: '3.60' },
-        handicap: { homeTeam: '药厂 -0.5', homeOdds: '1.93', awayTeam: '莱比锡 +0.5', awayOdds: '1.87' },
-        goalLine: { line: '3.0', overOdds: '1.88', underOdds: '1.92' }
-      }
-    }
-  ],
-  '意甲': [
-    {
-      id: 8,
-      date: '2024-11-09',
-      time: '19:30',
-      homeTeam: '尤文图斯',
-      awayTeam: 'AC米兰',
-      odds: {
-        winDrawWin: { home: '1.95', draw: '3.40', away: '3.80' },
-        handicap: { homeTeam: '尤文图斯 -0.25', homeOdds: '1.88', awayTeam: 'AC米兰 +0.25', awayOdds: '1.92' },
-        goalLine: { line: '2.25', overOdds: '1.85', underOdds: '1.95' }
-      }
-    },
-    {
-      id: 9,
-      date: '2024-11-09',
-      time: '21:45',
-      homeTeam: '国际米兰',
-      awayTeam: '罗马',
-      odds: {
-        winDrawWin: { home: '1.75', draw: '3.60', away: '4.50' },
-        handicap: { homeTeam: '国米 -0.75', homeOdds: '2.00', awayTeam: '罗马 +0.75', awayOdds: '1.80' },
-        goalLine: { line: '2.5', overOdds: '1.82', underOdds: '1.98' }
-      }
-    },
-    {
-      id: 10,
-      date: '2024-11-10',
-      time: '01:00',
-      homeTeam: '那不勒斯',
-      awayTeam: '佛罗伦萨',
-      odds: {
-        winDrawWin: { home: '1.80', draw: '3.50', away: '4.20' },
-        handicap: { homeTeam: '那不勒斯 -0.5', homeOdds: '1.93', awayTeam: '佛罗伦萨 +0.5', awayOdds: '1.87' },
-        goalLine: { line: '2.75', overOdds: '1.78', underOdds: '2.02' }
-      }
-    }
-  ]
-}
+// 监听联赛变化，重新加载赛程数据
+watch(selectedLeague, loadScheduleData, { immediate: true })
 
 // 根据选择的联赛和庄家过滤数据
 const upcomingMatches = computed(() => {
@@ -356,37 +230,82 @@ const upcomingMatches = computed(() => {
     return []
   }
 
-  // 使用联赛名称映射来获取正确的中文键名
-  const mappedLeagueName = leagueNameMapping[selectedLeague.value] || selectedLeague.value
-  console.log("mappedLeagueName: ", mappedLeagueName)
-  const leagueMatches = mockMatchesData[mappedLeagueName] || []
-  console.log("leagueMatches: ", leagueMatches)
+  // 过滤对应联赛的赛程数据
+  let filteredMatches = scheduleData.value.filter(match =>
+    match.league === selectedLeague.value
+  )
 
-  // 按比赛时间排序（日期+时间）
-  const sortedMatches = leagueMatches.sort((a, b) => {
+  // 将 schedule 数据转换为组件需要的格式
+  const formattedMatches = filteredMatches.map(match => {
+    const matchTime = new Date(match.match_time)
+
+    return {
+      id: match.match_id,
+      date: matchTime.toISOString().split('T')[0], // 格式化为 YYYY-MM-DD
+      time: matchTime.toTimeString().split(' ')[0].substring(0, 5), // 格式化为 HH:MM
+      homeTeam: match.home_team,
+      awayTeam: match.away_team,
+      league: match.league,
+      // 保存原始数据用于国际化显示
+      rawHomeTeam: match.home_team,
+      rawAwayTeam: match.away_team,
+      rawLeague: match.league,
+      // 这里需要调用 MarketsStore 来获取赔率数据，暂时使用示例赔率
+      odds: generateSampleOdds(match.home_team, match.away_team)
+    }
+  })
+
+  // 按比赛时间排序
+  const sortedMatches = formattedMatches.sort((a, b) => {
     const dateTimeA = new Date(`${a.date} ${a.time}`)
     const dateTimeB = new Date(`${b.date} ${b.time}`)
     return dateTimeA - dateTimeB
   })
 
-  // 根据不同庄家调整赔率（模拟庄家赔率差异）
+  // 根据不同庄家调整赔率
   return sortedMatches.map(match => {
     const adjustedMatch = { ...match }
-
-    if (selectedBookmaker.value === 'bet365') {
-      // Bet365 赔率调整
-      adjustedMatch.odds = adjustOddsForBookmaker(match.odds, 'bet365')
-    } else if (selectedBookmaker.value === 'sbo') {
-      // SBO 赔率调整
-      adjustedMatch.odds = adjustOddsForBookmaker(match.odds, 'sbo')
-    } else if (selectedBookmaker.value === 'ibc') {
-      // IBC 赔率调整
-      adjustedMatch.odds = adjustOddsForBookmaker(match.odds, 'ibc')
-    }
-
+    adjustedMatch.odds = adjustOddsForBookmaker(match.odds, selectedBookmaker.value)
     return adjustedMatch
   })
 })
+
+// 生成示例赔率数据（暂时使用，后续可以连接真实的赔率API）
+function generateSampleOdds(homeTeam, awayTeam) {
+  // 基于队伍名称生成随机赔率（保持一致性）
+  const homeTeamHash = homeTeam.split('').reduce((a, b) => a + b.charCodeAt(0), 0)
+  const awayTeamHash = awayTeam.split('').reduce((a, b) => a + b.charCodeAt(0), 0)
+  const matchHash = homeTeamHash + awayTeamHash
+
+  // 使用哈希值生成稳定的"随机"赔率
+  const seed = matchHash % 100
+
+  const baseHomeOdds = 1.5 + (seed % 50) / 100  // 1.50 - 2.00
+  const baseDrawOdds = 3.0 + (seed % 60) / 100  // 3.00 - 3.60
+  const baseAwayOdds = 2.5 + (seed % 70) / 100  // 2.50 - 3.20
+
+  const handicapLine = ((seed % 11) - 5) / 2  // -2.5 到 2.5
+  const goalLine = 2.0 + (seed % 8) / 4  // 2.0 到 3.75
+
+  return {
+    winDrawWin: {
+      home: baseHomeOdds.toFixed(2),
+      draw: baseDrawOdds.toFixed(2),
+      away: baseAwayOdds.toFixed(2)
+    },
+    handicap: {
+      homeTeam: handicapLine >= 0 ? `主队 +${handicapLine.toFixed(1)}` : `主队 ${handicapLine.toFixed(1)}`,
+      homeOdds: (1.85 + (seed % 20) / 100).toFixed(2),
+      awayTeam: handicapLine >= 0 ? `客队 -${handicapLine.toFixed(1)}` : `客队 +${Math.abs(handicapLine).toFixed(1)}`,
+      awayOdds: (1.85 + (seed % 20) / 100).toFixed(2)
+    },
+    goalLine: {
+      line: goalLine.toFixed(1),
+      overOdds: (1.80 + (seed % 25) / 100).toFixed(2),
+      underOdds: (1.95 + (seed % 25) / 100).toFixed(2)
+    }
+  }
+}
 
 // 根据庄家调整赔率的函数
 function adjustOddsForBookmaker(originalOdds, bookmakerId) {
@@ -414,14 +333,15 @@ async function loadLeagues() {
   leagues.value = await league_store.fetch_leagues()
 }
 
-onMounted(loadLeagues)
+// 组件挂载时加载联赛和赛程数据
+onMounted(async () => {
+  await loadLeagues()
+  await loadScheduleData()
+})
 
 const onLeagueChange = () => {
   console.log('Selected league for comparison:', selectedLeague.value)
-  // 调试信息：检查联赛映射
-  const mappedName = leagueNameMapping[selectedLeague.value] || selectedLeague.value
-  console.log('Mapped league name:', mappedName)
-  console.log('Available matches:', mockMatchesData[mappedName]?.length || 0)
+  // 赛程数据会通过 watch 自动加载
 }
 
 const onBookmakerChange = () => {
