@@ -86,24 +86,24 @@
                     <span class="odd-label">{{ $t('markets.home') }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.winDrawWin.home }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.home) + 0.15).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.home, (parseFloat(match.odds.winDrawWin.home) + 0.15).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.home) - 0.10).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.home, (parseFloat(match.odds.winDrawWin.home) - 0.10).toFixed(2)) }}</span>
                     </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.draw') }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.winDrawWin.draw }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.draw) + 0.20).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.draw, (parseFloat(match.odds.winDrawWin.draw) + 0.20).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.draw) - 0.05).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.draw, (parseFloat(match.odds.winDrawWin.draw) - 0.05).toFixed(2)) }}</span>
                     </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.away') }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.winDrawWin.away }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.away) + 0.25).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.away, (parseFloat(match.odds.winDrawWin.away) + 0.25).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.winDrawWin.away) + 0.10).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.winDrawWin.away, (parseFloat(match.odds.winDrawWin.away) + 0.10).toFixed(2)) }}</span>
                     </div>
                   </div>
                 </div>
@@ -120,16 +120,16 @@
                     <span class="odd-label">{{ match.odds.handicap.homeTeam }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.handicap.homeOdds }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.handicap.homeOdds) + 0.10).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.handicap.homeOdds, (parseFloat(match.odds.handicap.homeOdds) + 0.10).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.handicap.homeOdds) - 0.08).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.handicap.homeOdds, (parseFloat(match.odds.handicap.homeOdds) - 0.08).toFixed(2)) }}</span>
                     </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ match.odds.handicap.awayTeam }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.handicap.awayOdds }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.handicap.awayOdds) + 0.12).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.handicap.awayOdds, (parseFloat(match.odds.handicap.awayOdds) + 0.12).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.handicap.awayOdds) - 0.06).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.handicap.awayOdds, (parseFloat(match.odds.handicap.awayOdds) - 0.06).toFixed(2)) }}</span>
                     </div>
                   </div>
                 </div>
@@ -146,16 +146,16 @@
                     <span class="odd-label">{{ $t('markets.over') }} {{ match.odds.goalLine.line }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.goalLine.overOdds }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.goalLine.overOdds) + 0.08).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.goalLine.overOdds, (parseFloat(match.odds.goalLine.overOdds) + 0.08).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.goalLine.overOdds) - 0.04).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.goalLine.overOdds, (parseFloat(match.odds.goalLine.overOdds) - 0.04).toFixed(2)) }}</span>
                     </div>
                   </div>
                   <div class="odd-item">
                     <span class="odd-label">{{ $t('markets.under') }} {{ match.odds.goalLine.line }}</span>
                     <div class="odd-values">
                       <span class="odd-value">{{ match.odds.goalLine.underOdds }}</span>
-                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.goalLine.underOdds) + 0.11).toFixed(2) }}</span>
-                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.goalLine.underOdds, (parseFloat(match.odds.goalLine.underOdds) + 0.11).toFixed(2)) }}</span>
+                      <span class="model-odds" :title="$t('markets.modelOdds')">{{ (parseFloat(match.odds.goalLine.underOdds) - 0.03).toFixed(2) }}</span>
+                      <span class="margin-value" :title="$t('markets.margin')">{{ calculateMargin(match.odds.goalLine.underOdds, (parseFloat(match.odds.goalLine.underOdds) - 0.03).toFixed(2)) }}</span>
                     </div>
                   </div>
                 </div>
@@ -438,9 +438,9 @@ const formatDate = (dateStr) => {
 
 // 计算margin值
 const calculateMargin = (bookmakerOdds, modelOdds) => {
-  const margin = parseFloat(modelOdds) - parseFloat(bookmakerOdds)
-  // 为了演示效果，暂时降低阈值到0.15，这样一些margin会显示出来
-  return margin > 0.15 ? margin.toFixed(2) : '-'
+  const margin = parseFloat(bookmakerOdds) / parseFloat(modelOdds)
+  // margin值通常小于等于1，当大于1时显示出来，否则显示"-"
+  return margin > 1.0 ? margin.toFixed(2) : '-'
 }
 </script>
 
