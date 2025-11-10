@@ -2,182 +2,266 @@ import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 
 export const OddsStore = defineStore('odds', () => {
-
-  // 获取指定比赛的赔率数据
-  const fetchOddsByMatchId = async (matchId, bookmakerId = null) => {
-    try {
-      let query = supabase
-        .from('odds')
-        .select('*')
-        .eq('match_id', matchId)
-
-      // 如果指定了庄家ID，则过滤庄家
-      if (bookmakerId) {
-        query = query.eq('bookmaker_id', bookmakerId)
-      }
-
-      // 按创建时间降序排列，获取最新的赔率
-      query = query.order('created_at', { ascending: false })
-
-      const { data, error } = await query.limit(1) // 只获取最新的一条记录
-
-      if (error) {
-        console.error('Error fetching odds:', error)
-        return null
-      }
-
-      return data && data.length > 0 ? data[0] : null
-    } catch (err) {
-      console.error('Unexpected error:', err)
-      return null
-    }
-  }
-
-  // 获取多个比赛的赔率数据
-  const fetchOddsForMatches = async (matches, bookmakerId) => {
-    try {
-      if (!matches || matches.length === 0) return {}
-      if (!bookmakerId) return {}
-
-      const matchIds = matches.map(match => match.match_id || match.id)
-      console.log('Fetching odds for matchIds:', matchIds, 'bookmakerId:', bookmakerId)
-
-      let query = supabase
-        .from('odds')
-        .select('*')
-        .in('match_id', matchIds)
-        .eq('bookmaker_id', bookmakerId)
-
-      const { data, error } = await query
-
-      if (error) {
-        console.error('Error fetching odds for matches:', error)
-        return {}
-      }
-
-      console.log('Odds data received:', data)
-
-      // 按match_id分组，只保留每个比赛的最新赔率
-      const oddsMap = {}
-      if (data) {
-        data.forEach(odd => {
-          const matchId = odd.match_id
-          if (!oddsMap[matchId] || new Date(odd.created_at) > new Date(oddsMap[matchId].created_at)) {
-            oddsMap[matchId] = odd
-          }
-        })
-      }
-
-      console.log('Processed odds map:', oddsMap)
-      return oddsMap
-    } catch (err) {
-      console.error('Unexpected error:', err)
-      return {}
-    }
-  }
-
-  // 获取指定庄家的所有赔率
-  const fetchOddsByBookmaker = async (bookmakerId, limit = 50) => {
-    try {
-      const { data, error } = await supabase
-        .from('odds')
-        .select('*')
-        .eq('bookmaker_id', bookmakerId)
-        .order('created_at', { ascending: false })
-        .limit(limit)
-
-      if (error) {
-        console.error('Error fetching odds by bookmaker:', error)
-        return []
-      }
-
-      return data || []
-    } catch (err) {
-      console.error('Unexpected error:', err)
-      return []
-    }
-  }
-
-  // 将赔率数据转换为组件需要的格式
-  const formatOddsData = (oddsRecord) => {
-    if (!oddsRecord) return null
-
-    return {
-      winDrawWin: {
-        home: oddsRecord.win.toFixed(2),
-        draw: oddsRecord.draw.toFixed(2),
-        away: oddsRecord.lose.toFixed(2)
-      },
-      handicap: {
-        homeTeam: oddsRecord.handicap >= 0 ? `主队 +${oddsRecord.handicap.toFixed(1)}` : `主队 ${oddsRecord.handicap.toFixed(1)}`,
-        homeOdds: oddsRecord.home.toFixed(2),
-        awayTeam: oddsRecord.handicap >= 0 ? `客队 -${oddsRecord.handicap.toFixed(1)}` : `客队 +${Math.abs(oddsRecord.handicap).toFixed(1)}`,
-        awayOdds: oddsRecord.away.toFixed(2)
-      },
-      goalLine: {
-        line: oddsRecord.overunder.toFixed(1),
-        overOdds: oddsRecord.over.toFixed(2),
-        underOdds: oddsRecord.under.toFixed(2)
-      },
-      createdAt: oddsRecord.created_at,
-      bookmakerId: oddsRecord.bookmaker_id
-    }
-  }
-
-  // 获取 odds 表中所有的庄家
-  const fetchAvailableBookmakers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('odds')
-        .select('bookmaker_id')
-        .not('bookmaker_id', 'is', null)
-
-      if (error) {
-        console.error('Error fetching bookmakers:', error)
-        return []
-      }
-
-      // 去重并返回庄家列表
-      const uniqueBookmakerIds = [...new Set(data?.map(item => item.bookmaker_id) || [])]
-      return uniqueBookmakerIds.map(bookmakerId => ({
-        id: bookmakerId,
-        code: getBookmakerCode(bookmakerId)
-      }))
-    } catch (err) {
-      console.error('Unexpected error:', err)
-      return []
-    }
-  }
-
-  // 庄家ID映射（可以根据实际数据库中的bookmaker_id进行调整）
-  const bookmakerMapping = {
-    1: 'bet365',
-    2: 'sbo',
-    3: 'ibc'
-  }
-
-  // 根据bookmaker_id获取庄家代码
-  const getBookmakerCode = (bookmakerId) => {
-    return bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`
-  }
-
-  const getBookmakerId = (bookmakerCode) => {
-    const idMap = {
-      'bet365': 1,
-      'sbo': 2,
-      'ibc': 3
-    }
-    return idMap[bookmakerCode]
-  }
-
-  return {
-    fetchOddsByMatchId,
-    fetchOddsForMatches,
-    fetchOddsByBookmaker,
-    fetchAvailableBookmakers,
-    formatOddsData,
-    bookmakerMapping,
-    getBookmakerCode,
-    getBookmakerId
-  }
+  return {}
 })
+
+// 导出 Converter 类供外部使用
+export class Converter {
+    /**
+     * Constructor
+     * @param {Array} expects - Expected goals for home and away teams [homeExpect, awayExpect]
+     */
+    constructor(expects) {
+        this.expects = expects;
+        this.maxGoal = 10;
+        this.goals = Array.from({ length: this.maxGoal + 1 }, (_, i) => i);
+
+        // Calculate probability matrix using Poisson distribution
+        this.pm = this._createProbabilityMatrix();
+    }
+
+    /**
+     * Create probability matrix using Poisson distribution
+     * @returns {Array} 2D array representing the probability matrix
+     */
+    _createProbabilityMatrix() {
+        const [h_expect, a_expect] = this.expects;
+
+        // Calculate Poisson PMF for home and away goals
+        const h_pmf = this._poissonPMF(this.goals, h_expect);
+        const a_pmf = this._poissonPMF(this.goals, a_expect);
+
+        // Adjust last element to ensure sum to 1
+        h_pmf[h_pmf.length - 1] = 1 - h_pmf.slice(0, -1).reduce((a, b) => a + b, 0);
+        a_pmf[a_pmf.length - 1] = 1 - a_pmf.slice(0, -1).reduce((a, b) => a + b, 0);
+
+        // Create outer product matrix (h_pmf.reshape(-1, 1) * a_pmf.reshape(1, -1))
+        const pm = [];
+        for (let i = 0; i < h_pmf.length; i++) {
+            const row = [];
+            for (let j = 0; j < a_pmf.length; j++) {
+                row.push(h_pmf[i] * a_pmf[j]);
+            }
+            pm.push(row);
+        }
+
+        return pm;
+    }
+
+    /**
+     * Calculate Poisson Probability Mass Function with high precision
+     * @param {Array} k - Array of integers for which to calculate PMF
+     * @param {number} lambda - Expected value (mean) of the Poisson distribution
+     * @returns {Array} PMF values for each k
+     */
+    _poissonPMF(k, lambda) {
+        // Pre-calculate factorials for better performance and precision
+        const factorials = [1]; // factorials[0] = 0! = 1
+        for (let i = 1; i <= Math.max(...k); i++) {
+            factorials[i] = factorials[i - 1] * i;
+        }
+
+        // Pre-calculate e^(-lambda)
+        const expNegLambda = Math.exp(-lambda);
+
+        return k.map(x => {
+            if (lambda === 0) {
+                return x === 0 ? 1 : 0;
+            }
+
+            // Calculate lambda^x using iterative multiplication for better precision
+            let lambdaPower = 1;
+            for (let i = 1; i <= x; i++) {
+                lambdaPower *= lambda;
+            }
+
+            // Poisson PMF formula: (e^(-λ) * λ^x) / x!
+            return (expNegLambda * lambdaPower) / factorials[x];
+        });
+    }
+
+    /**
+     * Calculate European odds
+     * @param {number} h - Handicap value
+     * @returns {Array} European odds for home, draw, away
+     */
+    getEuroOdds(h = 0) {
+        if (Math.abs(h) >= this.maxGoal - 1) {
+            throw new Error('handicap too big');
+        }
+
+        const pm = this.pm;
+        const p = [0, 0, 0];
+
+        // Calculate draw probability (diagonal)
+        p[1] = this._sumDiagonal(pm, h);
+
+        // Calculate home win probability (lower triangle)
+        p[0] = this._sumLowerTriangle(pm, h - 1);
+
+        // Calculate away win probability (upper triangle)
+        p[2] = this._sumUpperTriangle(pm, h + 1);
+
+        // Return odds (1/p)
+        return p.map(prob => 1 / prob);
+    }
+
+    /**
+     * Calculate Asian handicap odds
+     * @param {number|null} h - Handicap value, if null it will be calculated
+     * @returns {Array} Handicap value followed by home and away odds
+     */
+    getAsianOdds(h = null) {
+        if (h === null) {
+            // Calculate handicap based on expected goals
+            h = this.expects[1] - this.expects[0];
+            h = Math.round(h * 4) * 0.25;
+        }
+
+        const pm = this.pm;
+        const h0 = Math.floor(h + 0.251); // Special rounding for 0.75 handicap
+        const h1 = h - h0;
+
+        // Calculate probabilities
+        const H = this._sumLowerTriangle(pm, h0 - 1);
+        const D = this._sumDiagonal(pm, h0);
+        const A = this._sumUpperTriangle(pm, h0 + 1);
+
+        let p;
+
+        if (h1 === 0) {
+            p = [H, A];
+        } else if (h1 === 0.25) {
+            p = [H + D / 2, A];
+        } else if (h1 === 0.5) {
+            p = [H + D, A];
+        } else if (h1 === -0.25) {
+            p = [H, A + D / 2];
+        } else {
+            throw new Error('get_asian_odds does not supported this handicap!');
+        }
+
+        // Normalize probabilities
+        const sumP = p.reduce((a, b) => a + b, 0);
+        p = p.map(prob => prob / sumP);
+
+        // Return handicap and odds
+        return [h, ...p.map(prob => 1 / prob)];
+    }
+
+    /**
+     * Calculate total goals (over/under) odds
+     * @param {number|null} g - Goals line, if null it will be calculated
+     * @returns {Array} Goals line followed by over and under odds
+     */
+    getTotalOdds(g = null) {
+        if (g === null) {
+            // Calculate goals line based on expected goals
+            g = this.expects[0] + this.expects[1];
+            g = Math.round(g * 4) * 0.25;
+        }
+
+        // Flip the matrix vertically
+        const pm = this._flipMatrix(this.pm);
+        const n = pm.length;
+        const floorG = Math.floor(g);
+        const g0 = floorG - n + 1;
+        const g1 = g - floorG;
+
+        let U, D, O, p;
+
+        if (g1 === 0) {
+            U = this._sumLowerTriangle(pm, g0 - 1); // under
+            O = this._sumUpperTriangle(pm, g0 + 1); // over
+            p = [O, U];
+        } else if (g1 === 0.25) {
+            U = this._sumLowerTriangle(pm, g0 - 1);
+            D = this._sumDiagonal(pm, g0); // diagonal
+            O = this._sumUpperTriangle(pm, g0 + 1);
+            p = [O, U + D / 2];
+        } else if (g1 === 0.5) {
+            U = this._sumLowerTriangle(pm, g0);
+            O = this._sumUpperTriangle(pm, g0 + 1);
+            p = [O, U];
+        } else if (g1 === 0.75) {
+            const adjustedG0 = g0 + 1;
+            U = this._sumLowerTriangle(pm, adjustedG0 - 1);
+            D = this._sumDiagonal(pm, adjustedG0);
+            O = this._sumUpperTriangle(pm, adjustedG0 + 1);
+            p = [O + D / 2, U];
+        } else {
+            throw new Error('not supported!');
+        }
+
+        // Normalize probabilities
+        const sumP = p.reduce((a, b) => a + b, 0);
+        p = p.map(prob => prob / sumP);
+
+        // Return goals line and odds
+        return [g, ...p.map(prob => 1 / prob)];
+    }
+
+    /**
+     * Helper method to sum diagonal elements with offset
+     * @param {Array} matrix - 2D array
+     * @param {number} offset - Diagonal offset
+     * @returns {number} Sum of diagonal elements
+     */
+    _sumDiagonal(matrix, offset) {
+        let sum = 0;
+        for (let i = 0; i < matrix.length; i++) {
+            const j = i + offset;
+            if (j >= 0 && j < matrix[i].length) {
+                sum += matrix[i][j];
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * Helper method to sum lower triangle elements (including diagonal)
+     * @param {Array} matrix - 2D array
+     * @param {number} offset - Diagonal offset
+     * @returns {number} Sum of lower triangle elements
+     */
+    _sumLowerTriangle(matrix, offset) {
+        let sum = 0;
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[i].length; j++) {
+                if (j <= i + offset) {
+                    sum += matrix[i][j];
+                }
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * Helper method to sum upper triangle elements (including diagonal)
+     * @param {Array} matrix - 2D array
+     * @param {number} offset - Diagonal offset
+     * @returns {number} Sum of upper triangle elements
+     */
+    _sumUpperTriangle(matrix, offset) {
+        let sum = 0;
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[i].length; j++) {
+                if (j >= i + offset) {
+                    sum += matrix[i][j];
+                }
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * Helper method to flip matrix vertically
+     * @param {Array} matrix - 2D array
+     * @returns {Array} Flipped matrix
+     */
+    _flipMatrix(matrix) {
+        // Create a deep copy to avoid modifying the original
+        const copy = matrix.map(row => [...row]);
+        return copy.reverse();
+    }
+}
