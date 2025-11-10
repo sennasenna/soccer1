@@ -119,11 +119,41 @@ export const OddsStore = defineStore('odds', () => {
     }
   }
 
+  // 获取 odds 表中所有的庄家
+  const fetchAvailableBookmakers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('odds')
+        .select('bookmaker_id')
+        .not('bookmaker_id', 'is', null)
+
+      if (error) {
+        console.error('Error fetching bookmakers:', error)
+        return []
+      }
+
+      // 去重并返回庄家列表
+      const uniqueBookmakerIds = [...new Set(data?.map(item => item.bookmaker_id) || [])]
+      return uniqueBookmakerIds.map(bookmakerId => ({
+        id: bookmakerId,
+        code: getBookmakerCode(bookmakerId)
+      }))
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      return []
+    }
+  }
+
   // 庄家ID映射（可以根据实际数据库中的bookmaker_id进行调整）
   const bookmakerMapping = {
     1: 'bet365',
     2: 'sbo',
     3: 'ibc'
+  }
+
+  // 根据bookmaker_id获取庄家代码
+  const getBookmakerCode = (bookmakerId) => {
+    return bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`
   }
 
   const getBookmakerId = (bookmakerCode) => {
@@ -139,8 +169,10 @@ export const OddsStore = defineStore('odds', () => {
     fetchOddsByMatchId,
     fetchOddsForMatches,
     fetchOddsByBookmaker,
+    fetchAvailableBookmakers,
     formatOddsData,
     bookmakerMapping,
+    getBookmakerCode,
     getBookmakerId
   }
 })

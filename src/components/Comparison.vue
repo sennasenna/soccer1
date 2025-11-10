@@ -206,12 +206,8 @@ const oddsData = ref({}) // 存储赔率数据
 const scheduleStore = ScheduleStore()
 const oddsStore = OddsStore()
 
-// 庄家数据
-const bookmakers = ref([
-  { id: 'bet365', name: 'Bet365' },
-  { id: 'sbo', name: 'SBO' },
-  { id: 'ibc', name: 'IBC' }
-])
+// 庄家数据（从odds表动态获取）
+const bookmakers = ref([])
 
 
 // 获取赛程数据
@@ -334,9 +330,19 @@ async function loadLeagues() {
   leagues.value = await scheduleStore.fetchUpcomingLeagues(30) // 获取未来30天内的联赛
 }
 
-// 组件挂载时加载联赛和赛程数据
+// 加载可用的庄家数据
+async function loadBookmakers() {
+  const bookmakerData = await oddsStore.fetchAvailableBookmakers()
+  bookmakers.value = bookmakerData.map(item => ({
+    id: item.code,
+    name: item.code.toUpperCase()
+  }))
+}
+
+// 组件挂载时加载联赛、庄家和赛程数据
 onMounted(async () => {
   await loadLeagues()
+  await loadBookmakers()
   await loadScheduleData()
 })
 
