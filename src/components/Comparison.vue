@@ -195,14 +195,17 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { LeaguesStore } from '@/store/Leagues'
 import { ScheduleStore } from '@/store/Schedule'
+import { OddsStore } from '@/store/Odds'
 
 const selectedLeague = ref('')
 const selectedBookmaker = ref('')
 const leagues = ref([])
 const scheduleData = ref([])
+const oddsData = ref({}) // 存储赔率数据
 
-// Schedule store 实例
+// Store 实例
 const scheduleStore = ScheduleStore()
+const oddsStore = OddsStore()
 
 // 庄家数据
 const bookmakers = ref([
@@ -221,8 +224,31 @@ const loadScheduleData = async () => {
   }
 }
 
+// 加载赔率数据
+const loadOddsData = async () => {
+  if (!selectedBookmaker.value || scheduleData.value.length === 0) {
+    oddsData.value = {}
+    return
+  }
+
+  const bookmakerId = oddsStore.getBookmakerId(selectedBookmaker.value)
+  if (!bookmakerId) {
+    console.error('Unknown bookmaker:', selectedBookmaker.value)
+    oddsData.value = {}
+    return
+  }
+
+  oddsData.value = await oddsStore.fetchOddsForMatches(scheduleData.value, bookmakerId)
+}
+
 // 监听联赛变化，重新加载赛程数据
 watch(selectedLeague, loadScheduleData, { immediate: true })
+
+// 监听庄家变化，重新加载赔率数据
+watch(selectedBookmaker, loadOddsData, { immediate: true })
+
+// 监听赛程数据变化，重新加载赔率数据
+watch(scheduleData, loadOddsData, { immediate: true })
 
 // 根据选择的联赛和庄家过滤数据
 const upcomingMatches = computed(() => {
@@ -238,6 +264,7 @@ const upcomingMatches = computed(() => {
   // 将 schedule 数据转换为组件需要的格式
   const formattedMatches = filteredMatches.map(match => {
     const matchTime = new Date(match.match_time)
+    const realOdds = oddsData.value[match.match_id]
 
     return {
       id: match.match_id,
@@ -250,8 +277,8 @@ const upcomingMatches = computed(() => {
       rawHomeTeam: match.home_team,
       rawAwayTeam: match.away_team,
       rawLeague: match.league,
-      // 这里需要调用 MarketsStore 来获取赔率数据，暂时使用示例赔率
-      odds: generateSampleOdds(match.home_team, match.away_team)
+      // 使用真实赔率数据，如果没有则使用示例赔率
+      odds: realOdds ? oddsStore.formatOddsData(realOdds) : generateSampleOdds(match.home_team, match.away_team)
     }
   })
 
@@ -262,12 +289,7 @@ const upcomingMatches = computed(() => {
     return dateTimeA - dateTimeB
   })
 
-  // 根据不同庄家调整赔率
-  return sortedMatches.map(match => {
-    const adjustedMatch = { ...match }
-    adjustedMatch.odds = adjustOddsForBookmaker(match.odds, selectedBookmaker.value)
-    return adjustedMatch
-  })
+  return sortedMatches
 })
 
 // 生成示例赔率数据（暂时使用，后续可以连接真实的赔率API）
@@ -307,26 +329,6 @@ function generateSampleOdds(homeTeam, awayTeam) {
   }
 }
 
-// 根据庄家调整赔率的函数
-function adjustOddsForBookmaker(originalOdds, bookmakerId) {
-  const adjustedOdds = JSON.parse(JSON.stringify(originalOdds))
-
-  if (bookmakerId === 'bet365') {
-    // Bet365 通常给出稍高的赔率
-    adjustedOdds.winDrawWin.home = (parseFloat(originalOdds.winDrawWin.home) + 0.05).toFixed(2)
-    adjustedOdds.winDrawWin.away = (parseFloat(originalOdds.winDrawWin.away) + 0.10).toFixed(2)
-  } else if (bookmakerId === 'sbo') {
-    // SBO 专注于亚洲盘口
-    adjustedOdds.handicap.homeOdds = (parseFloat(originalOdds.handicap.homeOdds) + 0.02).toFixed(2)
-    adjustedOdds.handicap.awayOdds = (parseFloat(originalOdds.handicap.awayOdds) - 0.02).toFixed(2)
-  } else if (bookmakerId === 'ibc') {
-    // IBC 大小球赔率较好
-    adjustedOdds.goalLine.overOdds = (parseFloat(originalOdds.goalLine.overOdds) + 0.03).toFixed(2)
-    adjustedOdds.goalLine.underOdds = (parseFloat(originalOdds.goalLine.underOdds) + 0.02).toFixed(2)
-  }
-
-  return adjustedOdds
-}
 
 const league_store = LeaguesStore()
 async function loadLeagues() {
