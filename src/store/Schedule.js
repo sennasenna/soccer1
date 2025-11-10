@@ -84,10 +84,40 @@ export const ScheduleStore = defineStore('schedule', () => {
     }
   }
 
+  // 获取未来赛程中包含的所有联赛
+  const fetchUpcomingLeagues = async (days = 30) => {
+    try {
+      const now = new Date().toISOString()
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + days)
+      const futureDateISO = futureDate.toISOString()
+
+      const { data, error } = await supabase
+        .from('schedule')
+        .select('league')
+        .gte('match_time', now)
+        .lt('match_time', futureDateISO)
+        .order('league', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching upcoming leagues:', error)
+        return []
+      }
+
+      // 去重并返回联赛列表
+      const uniqueLeagues = [...new Set(data?.map(item => item.league) || [])]
+      return uniqueLeagues.map(league => ({ league }))
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      return []
+    }
+  }
+
   return {
     fetchSchedule,
     fetchScheduleByLeague,
     fetchScheduleByDate,
-    fetchUpcomingSchedule
+    fetchUpcomingSchedule,
+    fetchUpcomingLeagues
   }
 })

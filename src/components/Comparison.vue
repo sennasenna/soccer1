@@ -193,7 +193,6 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import { LeaguesStore } from '@/store/Leagues'
 import { ScheduleStore } from '@/store/Schedule'
 import { OddsStore } from '@/store/Odds'
 
@@ -330,9 +329,9 @@ function generateSampleOdds(homeTeam, awayTeam) {
 }
 
 
-const league_store = LeaguesStore()
+// 加载未来赛程中的联赛数据
 async function loadLeagues() {
-  leagues.value = await league_store.fetch_leagues()
+  leagues.value = await scheduleStore.fetchUpcomingLeagues(30) // 获取未来30天内的联赛
 }
 
 // 组件挂载时加载联赛和赛程数据
