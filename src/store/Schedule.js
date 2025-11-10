@@ -113,11 +113,72 @@ export const ScheduleStore = defineStore('schedule', () => {
     }
   }
 
+  // 获取指定联赛和庄家的赛程及赔率数据（inner join）
+  const fetchScheduleWithOdds = async (league, bookmakerId) => {
+    try {
+      const now = new Date().toISOString()
+
+      // 使用 Supabase RPC 调用执行 inner join 查询
+      const { data, error } = await supabase.rpc('get_schedule_with_odds', {
+        p_league: league,
+        p_bookmaker_id: bookmakerId,
+        p_current_time: now
+      })
+
+      if (error) {
+        console.error('Error fetching schedule with odds:', error)
+        return []
+      }
+
+      console.log('Schedule with odds data:', data)
+      return data || []
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      return []
+    }
+  }
+
+  // 获取所有可用的庄家列表
+  const fetchAvailableBookmakers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('odds')
+        .select('bookmaker_id')
+        .not('bookmaker_id', 'is', null)
+
+      if (error) {
+        console.error('Error fetching bookmakers:', error)
+        return []
+      }
+
+      // 去重并返回庄家列表
+      const uniqueBookmakerIds = [...new Set(data?.map(item => item.bookmaker_id) || [])]
+
+      // 庄家ID映射
+      const bookmakerMapping = {
+        1: 'bet365',
+        2: 'sbo',
+        3: 'ibc'
+      }
+
+      return uniqueBookmakerIds.map(bookmakerId => ({
+        id: bookmakerId,
+        code: bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`,
+        name: (bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`).toUpperCase()
+      }))
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      return []
+    }
+  }
+
   return {
     fetchSchedule,
     fetchScheduleByLeague,
     fetchScheduleByDate,
     fetchUpcomingSchedule,
-    fetchUpcomingLeagues
+    fetchUpcomingLeagues,
+    fetchScheduleWithOdds,
+    fetchAvailableBookmakers
   }
 })

@@ -206,53 +206,19 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { ScheduleStore } from '@/store/Schedule'
-import { OddsStore } from '@/store/Odds'
 
 const selectedLeague = ref('')
 const selectedBookmaker = ref('')
 const leagues = ref([])
-const scheduleData = ref([])
-const oddsData = ref({}) // 存储赔率数据
+const bookmakers = ref([]) // 庄家数据（从odds表动态获取）
+const scheduleWithOddsData = ref([]) // 存储合并后的赛程和赔率数据
 const isLoading = ref(false) // 加载状态
 const hasData = ref(false) // 是否已加载数据
 
 // Store 实例
 const scheduleStore = ScheduleStore()
-const oddsStore = OddsStore()
-
-// 庄家数据（从odds表动态获取）
-const bookmakers = ref([])
 
 
-// 获取赛程数据
-const loadScheduleData = async () => {
-  if (selectedLeague.value) {
-    scheduleData.value = await scheduleStore.fetchScheduleByLeague(selectedLeague.value)
-  } else {
-    scheduleData.value = await scheduleStore.fetchUpcomingSchedule(7) // 获取未来7天的赛程
-  }
-}
-
-// 加载赔率数据
-const loadOddsData = async () => {
-  if (!selectedBookmaker.value || scheduleData.value.length === 0) {
-    oddsData.value = {}
-    return
-  }
-
-  const bookmakerId = oddsStore.getBookmakerId(selectedBookmaker.value)
-  if (!bookmakerId) {
-    console.error('Unknown bookmaker:', selectedBookmaker.value)
-    oddsData.value = {}
-    return
-  }
-
-  console.log('Loading odds data for bookmaker:', selectedBookmaker.value, 'ID:', bookmakerId)
-  console.log('Schedule data length:', scheduleData.value.length)
-
-  oddsData.value = await oddsStore.fetchOddsForMatches(scheduleData.value, bookmakerId)
-  console.log('Final odds data:', oddsData.value)
-}
 
 // 获取比较数据的主函数
 const fetchComparisonData = async () => {
@@ -262,33 +228,35 @@ const fetchComparisonData = async () => {
 
   isLoading.value = true
   hasData.value = false
-  scheduleData.value = []
-  oddsData.value = {}
+  scheduleWithOddsData.value = []
 
   try {
     console.log('开始获取比较数据...')
     console.log('联赛:', selectedLeague.value)
     console.log('庄家:', selectedBookmaker.value)
 
-    // 1. 获取赛程数据
-    console.log('正在加载赛程数据...')
-    const schedule = await scheduleStore.fetchScheduleByLeague(selectedLeague.value)
-    scheduleData.value = schedule
-    console.log('赛程数据加载完成:', schedule.length, '场比赛')
-
-    // 2. 获取赔率数据
-    if (schedule.length > 0) {
-      console.log('正在加载赔率数据...')
-      const bookmakerId = oddsStore.getBookmakerId(selectedBookmaker.value)
-      if (bookmakerId) {
-        const odds = await oddsStore.fetchOddsForMatches(schedule, bookmakerId)
-        oddsData.value = odds
-        console.log('赔率数据加载完成:', Object.keys(odds).length, '场比赛有赔率数据')
-      }
+    // 获取庄家ID
+    const bookmakerId = parseInt(selectedBookmaker.value.replace('bookmaker', ''))
+    if (isNaN(bookmakerId)) {
+      console.error('Invalid bookmaker format:', selectedBookmaker.value)
+      return
     }
 
-    hasData.value = true
-    console.log('数据获取完成！')
+    console.log('庄家ID:', bookmakerId)
+
+    // 使用 inner join 查询一次性获取赛程和赔率数据
+    console.log('正在通过 inner join 查询加载赛程和赔率数据...')
+    const data = await scheduleStore.fetchScheduleWithOdds(selectedLeague.value, bookmakerId)
+
+    scheduleWithOddsData.value = data
+    console.log('数据加载完成:', data.length, '场比赛有完整数据')
+
+    if (data.length > 0) {
+      hasData.value = true
+      console.log('数据获取完成！')
+    } else {
+      console.log('没有找到匹配的数据')
+    }
 
   } catch (error) {
     console.error('获取比较数据时出错:', error)
@@ -299,21 +267,35 @@ const fetchComparisonData = async () => {
 
 // 根据选择的联赛和庄家过滤数据
 const upcomingMatches = computed(() => {
-  if (!selectedLeague.value || !selectedBookmaker.value) {
+  if (!hasData.value || scheduleWithOddsData.value.length === 0) {
     return []
   }
 
-  // 过滤对应联赛的赛程数据
-  let filteredMatches = scheduleData.value.filter(match =>
-    match.league === selectedLeague.value
-  )
-
-  // 将 schedule 数据转换为组件需要的格式
-  const formattedMatches = filteredMatches.map(match => {
+  // 将合并后的数据转换为组件需要的格式
+  const formattedMatches = scheduleWithOddsData.value.map(match => {
     const matchTime = new Date(match.match_time)
-    const realOdds = oddsData.value[match.match_id]
 
-    console.log('Processing match:', match.match_id, 'has odds:', !!realOdds)
+    // 格式化赔率数据
+    const formattedOdds = {
+      winDrawWin: {
+        home: match.win.toFixed(2),
+        draw: match.draw.toFixed(2),
+        away: match.lose.toFixed(2)
+      },
+      handicap: {
+        homeTeam: match.handicap >= 0 ? `主队 +${match.handicap.toFixed(1)}` : `主队 ${match.handicap.toFixed(1)}`,
+        homeOdds: match.home.toFixed(2),
+        awayTeam: match.handicap >= 0 ? `客队 -${match.handicap.toFixed(1)}` : `客队 +${Math.abs(match.handicap).toFixed(1)}`,
+        awayOdds: match.away.toFixed(2)
+      },
+      goalLine: {
+        line: match.overunder.toFixed(1),
+        overOdds: match.over.toFixed(2),
+        underOdds: match.under.toFixed(2)
+      },
+      createdAt: match.odds_created_at,
+      bookmakerId: match.bookmaker_id
+    }
 
     return {
       id: match.match_id,
@@ -326,8 +308,8 @@ const upcomingMatches = computed(() => {
       rawHomeTeam: match.home_team,
       rawAwayTeam: match.away_team,
       rawLeague: match.league,
-      // 使用真实赔率数据，如果没有则使用示例赔率作为后备
-      odds: realOdds ? oddsStore.formatOddsData(realOdds) : generateSampleOdds(match.home_team, match.away_team)
+      // 直接使用合并查询得到的赔率数据
+      odds: formattedOdds
     }
   })
 
@@ -341,29 +323,6 @@ const upcomingMatches = computed(() => {
   return sortedMatches
 })
 
-// 生成示例赔率数据（当真实赔率数据不可用时的后备选项）
-function generateSampleOdds(homeTeam, awayTeam) {
-  console.warn('Using sample odds for match:', homeTeam, 'vs', awayTeam, '- No real odds data available')
-
-  return {
-    winDrawWin: {
-      home: '1.85',
-      draw: '3.50',
-      away: '4.20'
-    },
-    handicap: {
-      homeTeam: '主队 0',
-      homeOdds: '1.90',
-      awayTeam: '客队 0',
-      awayOdds: '1.90'
-    },
-    goalLine: {
-      line: '2.5',
-      overOdds: '1.85',
-      underOdds: '2.05'
-    }
-  }
-}
 
 
 // 加载未来赛程中的联赛数据
@@ -373,10 +332,10 @@ async function loadLeagues() {
 
 // 加载可用的庄家数据
 async function loadBookmakers() {
-  const bookmakerData = await oddsStore.fetchAvailableBookmakers()
+  const bookmakerData = await scheduleStore.fetchAvailableBookmakers()
   bookmakers.value = bookmakerData.map(item => ({
     id: item.code,
-    name: item.code.toUpperCase()
+    name: item.name
   }))
 }
 
@@ -390,16 +349,14 @@ const onLeagueChange = () => {
   console.log('Selected league for comparison:', selectedLeague.value)
   // 重置数据状态，等待用户点击确定按钮
   hasData.value = false
-  scheduleData.value = []
-  oddsData.value = {}
+  scheduleWithOddsData.value = []
 }
 
 const onBookmakerChange = () => {
   console.log('Selected bookmaker for comparison:', selectedBookmaker.value)
   // 重置数据状态，等待用户点击确定按钮
   hasData.value = false
-  scheduleData.value = []
-  oddsData.value = {}
+  scheduleWithOddsData.value = []
 }
 
 // 日期格式化函数
