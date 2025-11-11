@@ -25,27 +25,14 @@
           </div>
         </div>
 
-        <!-- 选择信息显示 -->
-        <div v-if="selectedLeague || selectedBookmaker" class="selection-info">
-          <div v-if="selectedLeague" class="info-item">
-            <strong>{{ $t('comparison.selectedLeague') }}:</strong>
-            <span>{{ $t('league.' + selectedLeague) }}</span>
-          </div>
-          <div v-if="selectedBookmaker" class="info-item">
-            <strong>{{ $t('comparison.selectedBookmaker') }}:</strong>
-            <span>{{ $t('bookmakers.' + selectedBookmaker) }}</span>
-          </div>
-          <div v-if="selectedLeague && selectedBookmaker" class="comparison-ready">
-            <p>{{ $t('comparison.readyForComparison') }}</p>
-          </div>
-        </div>
-
+  
         <!-- 确定按钮 -->
-        <div v-if="selectedLeague && selectedBookmaker" class="action-section">
+        <div class="action-section">
+          
           <button
             class="fetch-data-btn"
             @click="fetchComparisonData"
-            :disabled="isLoading"
+            :disabled="isLoading || !selectedLeague || !selectedBookmaker"
           >
             <span v-if="!isLoading">{{ $t('comparison.fetchData') }}</span>
             <span v-else>{{ $t('comparison.loading') }}...</span>
@@ -55,11 +42,6 @@
 
       <!-- 赔率比较内容区域 -->
       <div v-if="selectedLeague && selectedBookmaker && hasData" class="odds-comparison-section">
-        <div class="section-header">
-          <h3>{{ $t('comparison.upcomingMatches') }}</h3>
-          <p>{{ $t('comparison.bookmakerOdds', { bookmaker: $t('bookmakers.' + selectedBookmaker) }) }}</p>
-        </div>
-
         <!-- 赛程列表 -->
         <div class="matches-list">
           <div v-for="match in upcomingMatches" :key="match.id" class="match-card">
@@ -82,10 +64,6 @@
 
             <!-- 赔率信息 -->
             <div class="odds-info">
-              <!-- 庄家名称标签 -->
-              <div class="bookmaker-label">
-                <span class="label-tag">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
-              </div>
 
               <!-- 胜平负赔率 -->
               <div class="odds-group">
@@ -483,7 +461,6 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
 
 .form-group select {
   width: 100%;
-  max-width: 400px;
   padding: 12px 16px;
   border: 2px solid #e1e5e9;
   border-radius: 8px;
@@ -505,76 +482,27 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
   color: #f3f4f6;
 }
 
-/* 选择信息显示区域 */
-.selection-info {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
-  border-left: 4px solid #667eea;
-}
 
-.dark .selection-info {
-  background: #1f2937;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  font-size: 16px;
-}
-
-.info-item:last-child {
-  margin-bottom: 0;
-}
-
-.info-item strong {
-  color: #333;
-  min-width: 80px;
-}
-
-.dark .info-item strong {
-  color: #f3f4f6;
-}
-
-.info-item span {
-  color: #666;
-  font-weight: 500;
-}
-
-.dark .info-item span {
-  color: #9ca3af;
-}
-
-.comparison-ready {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.dark .comparison-ready {
-  border-top-color: rgba(75, 85, 99, 0.3);
-}
-
-.comparison-ready p {
-  color: #667eea;
-  font-weight: 600;
-  margin: 0;
-  font-size: 16px;
-}
 
 /* 确定按钮区域 */
 .action-section {
   margin-top: 20px;
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.action-section > div:first-child {
+  /* 左边空区域，隐藏但占位 */
+}
+
+.action-section > .fetch-data-btn {
+  /* 按钮跨越整个action-section的宽度 */
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .fetch-data-btn {
-  width: 100%;
-  max-width: 300px;
   padding: 15px 30px;
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
@@ -618,37 +546,6 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
   border-color: rgba(75, 85, 99, 0.3);
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.dark .section-header {
-  border-bottom-color: rgba(75, 85, 99, 0.3);
-}
-
-.section-header h3 {
-  color: #333;
-  margin: 0 0 10px 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.dark .section-header h3 {
-  color: #f3f4f6;
-}
-
-.section-header p {
-  color: #666;
-  margin: 0;
-  font-size: 16px;
-}
-
-.dark .section-header p {
-  color: #9ca3af;
-}
 
 /* 赛程列表 */
 .matches-list {
@@ -750,13 +647,7 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
   gap: 20px;
 }
 
-/* 庄家标签 */
-.bookmaker-label {
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
+/* 庄家标签 - 已删除bookmaker-label容器，保留label-tag备用 */
 .label-tag {
   display: inline-block;
   background: linear-gradient(135deg, #667eea, #764ba2);
@@ -1082,14 +973,7 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
     min-width: auto;
   }
 
-  .section-header h3 {
-    font-size: 20px;
   }
-
-  .section-header p {
-    font-size: 14px;
-  }
-}
 
 @media (max-width: 480px) {
   .comparison-content {
