@@ -19,7 +19,7 @@
             <select id="bookmaker" v-model="selectedBookmaker" @change="onBookmakerChange">
               <option value="">{{ $t("comparison.selectBookmakerPlaceholder") }}</option>
               <option v-for="bookmaker in bookmakers" :key="bookmaker.id" :value="bookmaker.id">
-                {{ $t('bookmakers.' + bookmaker.id) }}
+                {{ $t(bookmaker.name) }}
               </option>
             </select>
           </div>
@@ -48,8 +48,7 @@
             <!-- 比赛信息 -->
             <div class="match-info">
               <div class="match-time">
-                <div class="date">{{ formatDate(match.date) }}</div>
-                <div class="time">{{ match.time }}</div>
+                {{ formatDate(match.dateTime) }}
               </div>
               <div class="match-teams">
                 <div class="team home-team">
@@ -68,8 +67,7 @@
               <!-- 胜平负赔率 -->
               <div class="odds-group">
                 <div class="market-header">
-                  <span class="market-label">{{ $t('markets.marketType') }}</span>
-                  <span class="market-name">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+                  <span class="market-label">{{ $t('markets.marketType1x2') }}</span>
                 </div>
                 <div class="odds-row">
                   <div class="odd-item">
@@ -102,8 +100,7 @@
               <!-- 盘口赔率 -->
               <div class="odds-group">
                 <div class="market-header">
-                  <span class="market-label">{{ $t('markets.marketType') }}</span>
-                  <span class="market-name">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+                  <span class="market-label">{{ $t('markets.marketTypeHandicap') }}</span>
                 </div>
                 <div class="odds-row">
                   <div class="odd-item">
@@ -128,8 +125,7 @@
               <!-- 大小球赔率 -->
               <div class="odds-group">
                 <div class="market-header">
-                  <span class="market-label">{{ $t('markets.marketType') }}</span>
-                  <span class="market-name">{{ $t('bookmakers.' + selectedBookmaker) }}</span>
+                  <span class="market-label">{{ $t('markets.marketTypeOverunder') }}</span>
                 </div>
                 <div class="odds-row">
                   <div class="odd-item">
@@ -230,7 +226,8 @@ const fetchComparisonData = async () => {
     console.log('庄家:', selectedBookmaker.value)
 
     // 获取庄家ID
-    const bookmakerId = parseInt(selectedBookmaker.value.replace('bookmaker', ''))
+    console.log("selectedBookmaker.value: ", selectedBookmaker.value)
+    const bookmakerId = parseInt(selectedBookmaker.value)
     if (isNaN(bookmakerId)) {
       console.error('Invalid bookmaker format:', selectedBookmaker.value)
       return
@@ -308,20 +305,20 @@ const upcomingMatches = computed(() => {
     // 格式化真实庄家赔率数据
     const realOdds = {
       winDrawWin: {
-        home: match.win.toFixed(2),
-        draw: match.draw.toFixed(2),
-        away: match.lose.toFixed(2)
+        home: match.win ? match.win.toFixed(2) : '-',
+        draw: match.draw ? match.draw.toFixed(2) : '-',
+        away: match.lose ? match.lose.toFixed(2): '-'
       },
       handicap: {
-        homeTeam: match.handicap >= 0 ? `${getTeamName(match.league, match.home_team)} +${match.handicap.toFixed(1)}` : `${getTeamName(match.league, match.home_team)} ${match.handicap.toFixed(1)}`,
-        homeOdds: match.home.toFixed(2),
-        awayTeam: match.handicap >= 0 ? `${getTeamName(match.league, match.away_team)} -${match.handicap.toFixed(1)}` : `${getTeamName(match.league, match.away_team)} +${Math.abs(match.handicap).toFixed(1)}`,
-        awayOdds: match.away.toFixed(2)
+        homeTeam: match.handicap ? match.handicap>= 0 ? `${getTeamName(match.league, match.home_team)} +${match.handicap.toFixed(2)}` : `${getTeamName(match.league, match.home_team)} ${match.handicap.toFixed(2)}` : "-",
+        homeOdds: match.home ? match.home.toFixed(2): '-',
+        awayTeam: match.handicap ? match.handicap>= 0 ? `${getTeamName(match.league, match.away_team)} -${match.handicap.toFixed(2)}` : `${getTeamName(match.league, match.away_team)} +${Math.abs(match.handicap).toFixed(2)}` : "-",
+        awayOdds: match.away ? match.away.toFixed(2): '-'
       },
       goalLine: {
-        line: match.overunder.toFixed(1),
-        overOdds: match.over.toFixed(2),
-        underOdds: match.under.toFixed(2)
+        line: match.overunder ? match.overunder.toFixed(2): '-',
+        overOdds: match.over ? match.over.toFixed(2): '-',
+        underOdds: match.under ? match.under.toFixed(2): '-'
       },
       createdAt: match.odds_created_at,
       bookmakerId: match.bookmaker_id
@@ -329,8 +326,7 @@ const upcomingMatches = computed(() => {
 
     return {
       id: match.match_id,
-      date: matchTime.toISOString().split('T')[0], // 格式化为 YYYY-MM-DD
-      time: matchTime.toTimeString().split(' ')[0].substring(0, 5), // 格式化为 HH:MM
+      dateTime: matchTime.toISOString().replace('T', ' ').substring(0, 19), // 格式化为 YYYY-MM-DD HH:MM:SS
       homeTeam: match.home_team,
       awayTeam: match.away_team,
       league: match.league,
@@ -346,8 +342,8 @@ const upcomingMatches = computed(() => {
 
   // 按比赛时间排序
   const sortedMatches = formattedMatches.sort((a, b) => {
-    const dateTimeA = new Date(`${a.date} ${a.time}`)
-    const dateTimeB = new Date(`${b.date} ${b.time}`)
+    const dateTimeA = new Date(a.dateTime)
+    const dateTimeB = new Date(b.dateTime)
     return dateTimeA - dateTimeB
   })
 
@@ -365,9 +361,11 @@ async function loadLeagues() {
 async function loadBookmakers() {
   const bookmakerData = await scheduleStore.fetchAvailableBookmakers()
   bookmakers.value = bookmakerData.map(item => ({
-    id: item.code,
+    id: item.id,
     name: item.name
   }))
+
+  console.log("bookmakers.value: ", bookmakers.value)
 }
 
 // 组件挂载时只加载基础数据（联赛和庄家列表）
@@ -390,12 +388,10 @@ const onBookmakerChange = () => {
   scheduleWithOddsData.value = []
 }
 
-// 日期格式化函数
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr)
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  return `${month}月${day}日`
+// 日期时间格式化函数
+const formatDate = (dateTimeStr) => {
+  // dateTime 格式已经是 YYYY-MM-DD HH:MM:SS，直接返回
+  return dateTimeStr
 }
 
 // 计算margin值
@@ -589,23 +585,9 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
 
 .match-time {
   text-align: left;
-}
-
-.match-time .date {
   color: #667eea;
   font-weight: 600;
   font-size: 16px;
-  margin-bottom: 5px;
-}
-
-.match-time .time {
-  color: #666;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.dark .match-time .time {
-  color: #9ca3af;
 }
 
 .match-teams {
@@ -706,16 +688,6 @@ const calculateMargin = (bookmakerOdds, modelOdds) => {
 .dark .market-label {
   color: #8b9dc3;
   background: rgba(139, 157, 195, 0.1);
-}
-
-.market-name {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.dark .market-name {
-  color: #f3f4f6;
 }
 
 .odds-row {

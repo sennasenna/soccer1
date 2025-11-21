@@ -36,12 +36,15 @@
     "feature4": "Smart betting recommendations",
     "feature4Desc": "Provide optimal betting suggestions and strategies based on data analysis",
     "comingSoon": "Coming Soon",
-    "comingSoonDesc": "Odds comparison feature is under active development, stay tuned for more exciting features"
+    "comingSoonDesc": "Odds comparison feature is under active development, stay tuned for more exciting features",
+    "fetchData": "Fetch Data",
+    "loading": "Loading"
   },
   "bookmakers": {
     "bet365": "Bet365",
     "sbo": "SBO",
-    "ibc": "IBC"
+    "ibc": "IBC",
+    "8": "Bet365"
   },
   "markets": {
     "LEAGUE": "LEAGUE",
@@ -71,13 +74,16 @@
     "over": "Over",
     "under": "Under",
     "marketType": "Market",
+    "marketType1x2": "1x2",
+    "marketTypeHandicap": "Handicap",
+    "marketTypeOverunder": "Overunder",
     "modelOdds": "Model Odds",
     "margin": "Margin"
 
   },
   "league": {
-    "English Premier League": "English Premier League",
-    "France Ligue I": "France Ligue I",
+    "England Premier League": "England Premier League",
+    "France Ligue Ⅰ": "France Ligue Ⅰ",
     "Germany Bundesliga": "Germany Bundesliga",
     "Italy Serie A": "Italy Serie A",
     "Spain Primera Liga": "Spain Primera Liga",
@@ -87,7 +93,7 @@
     "意甲": "Serie A"
   },
   "teams": {
-    "English Premier League": {
+    "England Premier League": {
       "Arsenal": "Arsenal",
       "Aston Villa": "Aston Villa",
       "Bournemouth": "Bournemouth",
@@ -109,7 +115,7 @@
       "West Ham United": "West Ham United",
       "Wolverhampton Wanderers": "Wolverhampton Wanderers"
   },
-    "France Ligue I": {
+    "France Ligue Ⅰ": {
       "Angers": "Angers",
       "Auxerre": "Auxerre",
       "Brest": "Brest",

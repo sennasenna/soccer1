@@ -43,7 +43,8 @@
   "bookmakers": {
     "bet365": "Bet365",
     "sbo": "SBO",
-    "ibc": "IBC"
+    "ibc": "IBC",
+    "8": "Bet365"
   },
   "markets": {
         "LEAGUE": "选择联赛",
@@ -72,12 +73,15 @@
         "over": "大",
         "under": "小",
         "marketType": "玩法",
+        "marketType1x2": "胜平负",
+        "marketTypeHandicap": "亚盘",
+        "marketTypeOverunder": "大小球",
         "modelOdds": "模型赔率",
         "margin": "Margin"
   },
   "league": {
-    "English Premier League": "英格兰足球超级联赛",
-    "France Ligue I": "法国足球甲级联赛",
+    "England Premier League": "英格兰足球超级联赛",
+    "France Ligue Ⅰ": "法国足球甲级联赛",
     "Germany Bundesliga": "德国足球甲级联赛",
     "Italy Serie A": "意大利足球甲级联赛",
     "Spain Primera Liga": "西班牙足球甲级联赛",
@@ -87,7 +91,7 @@
     "意甲": "意甲"
   },
   "teams": {
-    "English Premier League": {
+    "England Premier League": {
       "Arsenal": "阿森纳",
       "Aston Villa": "阿斯顿维拉",
       "Bournemouth": "伯恩茅斯",
@@ -109,7 +113,7 @@
       "West Ham United": "西汉姆联",
       "Wolverhampton Wanderers": "狼队"
     },
-    "France Ligue I": {
+    "France Ligue Ⅰ": {
       "Angers": "昂热",
       "Auxerre": "欧塞尔",
       "Brest": "布雷斯特",
