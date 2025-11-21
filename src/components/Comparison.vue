@@ -201,6 +201,7 @@ const { t } = useI18n()
 // 获取球队名称的翻译
 const getTeamName = (league, teamName) => {
   try {
+    // 使用方括号访问法处理包含点号的团队名称
     return t(`teams.${league}.${teamName}`)
   } catch (error) {
     // 如果找不到翻译，返回原始名称
@@ -310,13 +311,13 @@ const upcomingMatches = computed(() => {
         away: match.lose ? match.lose.toFixed(2): '-'
       },
       handicap: {
-        homeTeam: match.handicap ? match.handicap>= 0 ? `${getTeamName(match.league, match.home_team)} +${match.handicap.toFixed(2)}` : `${getTeamName(match.league, match.home_team)} ${match.handicap.toFixed(2)}` : "-",
+        homeTeam: match.handicap !== null ? match.handicap>= 0 ? `${getTeamName(match.league, match.home_team)} +${match.handicap.toFixed(2)}` : `${getTeamName(match.league, match.home_team)} ${match.handicap.toFixed(2)}` : "-",
         homeOdds: match.home ? match.home.toFixed(2): '-',
-        awayTeam: match.handicap ? match.handicap>= 0 ? `${getTeamName(match.league, match.away_team)} -${match.handicap.toFixed(2)}` : `${getTeamName(match.league, match.away_team)} +${Math.abs(match.handicap).toFixed(2)}` : "-",
+        awayTeam: match.handicap !== null ? match.handicap>= 0 ? `${getTeamName(match.league, match.away_team)} -${match.handicap.toFixed(2)}` : `${getTeamName(match.league, match.away_team)} +${Math.abs(match.handicap).toFixed(2)}` : "-",
         awayOdds: match.away ? match.away.toFixed(2): '-'
       },
       goalLine: {
-        line: match.overunder ? match.overunder.toFixed(2): '-',
+        line: match.overunder !== null ? match.overunder.toFixed(2): '-',
         overOdds: match.over ? match.over.toFixed(2): '-',
         underOdds: match.under ? match.under.toFixed(2): '-'
       },
