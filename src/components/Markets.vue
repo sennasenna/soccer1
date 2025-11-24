@@ -154,6 +154,7 @@ watch(() => selectedLeague, loadLeagueteams, { deep: true })
 
 
 import { MarketsStore } from '@/store/Markets'
+import {Converter} from "@/store/Odds.js";
 const markets_store = MarketsStore()
 
 const canCalculate = computed(() => {
@@ -168,22 +169,29 @@ async function calculate(){
 
   //if (!canCalculate.value) return
 
-  markets.value = await markets_store.fetch_markets({"league": selectedLeague.value, home_team:selectedHomeTeam.value, away_team:selectedAwayTeam.value})
+  markets.value = await markets_store.fetch_xgs({"league": selectedLeague.value, home_team:selectedHomeTeam.value, away_team:selectedAwayTeam.value})
+
+  const converter = new Converter([markets.value[0].xg1, markets.value[0].xg2])
+  // 计算三种玩法的赔率
+  const euroOdds = converter.getEuroOdds()        // 欧洲赔率（平局）
+  const asianOdds = converter.getAsianOdds() // 亚洲盘口（使用真实的盘口线）
+  const totalOdds = converter.getTotalOdds()   // 大小球（使用真实的大小球线）
+
 
   // 胜平负赔率计算
-  const homeWinOdds = (markets.value[0].win).toFixed(2)
-  const drawOdds = (markets.value[0].draw).toFixed(2)
-  const awayWinOdds = (markets.value[0].lose).toFixed(2)
+  const homeWinOdds = (euroOdds[0]).toFixed(2)
+  const drawOdds = (euroOdds[1]).toFixed(2)
+  const awayWinOdds = (euroOdds[2]).toFixed(2)
 
   // 亚盘数据
-  const homeHandicapOdds = (markets.value[0].home).toFixed(2)
-  const handicapLine = (markets.value[0].handicap).toFixed(2)
-  const awayHandicapOdds = (markets.value[0].away).toFixed(2)
+  const homeHandicapOdds = (asianOdds[1]).toFixed(2)
+  const handicapLine = (asianOdds[0]).toFixed(2)
+  const awayHandicapOdds = (asianOdds[2]).toFixed(2)
 
   // 大小球数据
-  const overOdds = (markets.value[0].over).toFixed(2)
-  const totalLine = (markets.value[0].overunder).toFixed(2)
-  const underOdds = (markets.value[0].under).toFixed(2)
+  const overOdds = (totalOdds[1]).toFixed(2)
+  const totalLine = (totalOdds[0]).toFixed(2)
+  const underOdds = (totalOdds[2]).toFixed(2)
 
   const update_time = new Date(markets.value[0].update_time).toLocaleString()
 
