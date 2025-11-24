@@ -19,7 +19,7 @@
             <select id="bookmaker" v-model="selectedBookmaker" @change="onBookmakerChange">
               <option value="">{{ $t("comparison.selectBookmakerPlaceholder") }}</option>
               <option v-for="bookmaker in bookmakers" :key="bookmaker.id" :value="bookmaker.id">
-                {{ $t(bookmaker.name) }}
+                {{ $t("bookmakers." + bookmaker.name) }}
               </option>
             </select>
           </div>
@@ -222,19 +222,12 @@ const fetchComparisonData = async () => {
   scheduleWithOddsData.value = []
 
   try {
-    console.log('开始获取比较数据...')
-    console.log('联赛:', selectedLeague.value)
-    console.log('庄家:', selectedBookmaker.value)
-
     // 获取庄家ID
-    console.log("selectedBookmaker.value: ", selectedBookmaker.value)
     const bookmakerId = parseInt(selectedBookmaker.value)
     if (isNaN(bookmakerId)) {
       console.error('Invalid bookmaker format:', selectedBookmaker.value)
       return
     }
-
-    console.log('庄家ID:', bookmakerId)
 
     // 使用 inner join 查询一次性获取赛程和赔率数据
     console.log('正在通过 inner join 查询加载赛程和赔率数据...')
@@ -271,7 +264,6 @@ const upcomingMatches = computed(() => {
     let modelOdds = null
     if (match.xg1 !== null && match.xg2 !== null) {
       try {
-        console.log("match.xg1, match.xg2: ", match.xg1, match.xg2)
         // 创建 Converter 实例
         const converter = new Converter([match.xg1, match.xg2])
 
@@ -366,7 +358,6 @@ async function loadBookmakers() {
     name: item.name
   }))
 
-  console.log("bookmakers.value: ", bookmakers.value)
 }
 
 // 组件挂载时只加载基础数据（联赛和庄家列表）
@@ -376,14 +367,12 @@ onMounted(async () => {
 })
 
 const onLeagueChange = () => {
-  console.log('Selected league for comparison:', selectedLeague.value)
   // 重置数据状态，等待用户点击确定按钮
   hasData.value = false
   scheduleWithOddsData.value = []
 }
 
 const onBookmakerChange = () => {
-  console.log('Selected bookmaker for comparison:', selectedBookmaker.value)
   // 重置数据状态，等待用户点击确定按钮
   hasData.value = false
   scheduleWithOddsData.value = []

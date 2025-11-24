@@ -117,7 +117,6 @@ export const ScheduleStore = defineStore('schedule', () => {
   const fetchScheduleWithOdds = async (league, bookmakerId) => {
     try {
       const now = new Date().toISOString()
-      console.log("league, bookmakerId: ", league, bookmakerId);
       // 使用 Supabase RPC 调用执行 inner join 查询
       const { data, error } = await supabase.rpc('get_schedule_with_odds', {
         p_league: league,
@@ -156,15 +155,17 @@ export const ScheduleStore = defineStore('schedule', () => {
 
       // 庄家ID映射
       const bookmakerMapping = {
-        2: 'SBOBet',
+        2: "sbobet",
         3: 'bet365',
-        7: 'Pinnacle'
+        7: 'Pinnacle',
+        72: "MarathonBet",
+        125: "1XBet"
       }
 
       return uniqueBookmakerIds.map(bookmakerId => ({
         id: bookmakerId,
         code: bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`,
-        name: (bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`).toUpperCase()
+        name: (bookmakerMapping[bookmakerId] || `bookmaker${bookmakerId}`)
       }))
     } catch (err) {
       console.error('Unexpected error:', err)

@@ -41,10 +41,11 @@
     "loading": "加载中"
   },
   "bookmakers": {
+    "sbobet": "sbobet",
     "bet365": "Bet365",
-    "sbo": "SBO",
-    "ibc": "IBC",
-    "8": "Bet365"
+    "Pinnacle": "Pinnacle",
+    "MarathonBet": "MarathonBet",
+    "1XBet": "1XBet"
   },
   "markets": {
         "LEAGUE": "选择联赛",
