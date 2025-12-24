@@ -181,7 +181,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ScheduleStore } from '@/store/Schedule'
-import { OddsStore, Converter } from '@/store/Odds'
+import { OddsStore, Converter } from '@/store/Odds_without_pho.js'
 
 const selectedLeague = ref('')
 const selectedBookmaker = ref('')
