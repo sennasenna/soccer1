@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 
-export const OddsStore = defineStore('odds', () => {
+export const OddsStore1 = defineStore('odds', () => {
   return {}
 })
 
 // 导出 Converter 类供外部使用
-export class Converter {
+export class Converter1 {
     /**
      * Constructor
      * @param {Array} expects - Expected goals for home and away teams [homeExpect, awayExpect]

@@ -154,7 +154,7 @@ watch(() => selectedLeague, loadLeagueteams, { deep: true })
 
 
 import { MarketsStore } from '@/store/Markets'
-import {Converter} from "@/store/Odds_without_pho.js";
+import {Converter} from "@/store/Odds.js";
 const markets_store = MarketsStore()
 
 const canCalculate = computed(() => {
