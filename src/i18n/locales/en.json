@@ -100,7 +100,6 @@
       "Bournemouth": "Bournemouth",
       "Brentford": "Brentford",
       "Brighton & Hove Albion": "Brighton & Hove Albion",
-      "Burnley": "Burnley",
       "Chelsea": "Chelsea",
       "Crystal Palace": "Crystal Palace",
       "Everton": "Everton",
@@ -113,8 +112,9 @@
       "Nottingham Forest": "Nottingham Forest",
       "Sunderland": "Sunderland",
       "Tottenham Hotspur": "Tottenham Hotspur",
-      "West Ham United": "West Ham United",
-      "Wolverhampton Wanderers": "Wolverhampton Wanderers"
+      "Coventry City": "Coventry City",
+      "Ipswich Town": "Ipswich Town",
+      "Hull City": "Hull City"
   },
     "France Ligue Ⅰ": {
       "Angers": "Angers",
@@ -126,15 +126,15 @@
       "Lorient": "Lorient",
       "Lyon": "Lyon",
       "Marseille": "Marseille",
-      "Metz": "Metz",
       "Monaco": "Monaco",
-      "Nantes": "Nantes",
       "Nice": "Nice",
       "Paris FC": "Paris FC",
       "Paris Saint-Germain": "Paris Saint-Germain",
       "Rennes": "Rennes",
       "Strasbourg": "Strasbourg",
-      "Toulouse": "Toulouse"
+      "Toulouse": "Toulouse",
+      "Troyes": "Troyes",
+      "Le Mans": "Le Mans"
     },
     "Germany Bundesliga": {
       "1899 Hoffenheim": "1899 Hoffenheim",
@@ -146,15 +146,15 @@
       "Eintracht Frankfurt": "Eintracht Frankfurt",
       "Freiburg": "Freiburg",
       "Hamburger": "Hamburger",
-      "Heidenheim": "Heidenheim",
       "Koln": "Koln",
       "Mainz 05": "Mainz 05",
       "RB Leipzig": "RB Leipzig",
-      "St Pauli": "St. Pauli",
       "Stuttgart": "Stuttgart",
       "Union Berlin": "Union Berlin",
       "Werder Bremen": "Werder Bremen",
-      "Wolfsburg": "Wolfsburg"
+      "Paderborn 07": "Paderborn 07",
+      "Elversberg": "Elversberg",
+      "Schalke 04": "Schalke 04"
     },
     "Italy Serie A": {
       "AC Milan": "AC Milan",
@@ -162,7 +162,6 @@
       "Bologna": "Bologna",
       "Cagliari": "Cagliari",
       "Como": "Como",
-      "Cremonese": "Cremonese",
       "Fiorentina": "Fiorentina",
       "Genoa": "Genoa",
       "Inter Milan": "Inter Milan",
@@ -171,12 +170,13 @@
       "Lecce": "Lecce",
       "Napoli": "Napoli",
       "Parma": "Parma",
-      "Pisa": "Pisa",
       "Roma": "Roma",
       "Sassuolo": "Sassuolo",
       "Torino": "Torino",
       "Udinese": "Udinese",
-      "Verona": "Verona"
+      "Frosinone": "Frosinone",
+      "Venezia": "Venezia",
+      "Monza": "Monza"
     },
     "Spain Primera Liga": {
       "Alaves": "Alaves",
@@ -187,18 +187,18 @@
       "Elche": "Elche",
       "Espanyol": "Espanyol",
       "Getafe": "Getafe",
-      "Girona": "Girona",
       "Levante": "Levante",
-      "Mallorca": "Mallorca",
       "Osasuna": "Osasuna",
       "Real Betis": "Real Betis",
       "Real Madrid": "Real Madrid",
-      "Real Oviedo": "Real Oviedo",
       "Real Sociedad": "Real Sociedad",
       "Sevilla": "Sevilla",
       "Valencia": "Valencia",
       "Vallecano": "Vallecano",
-      "Villarreal": "Villarreal"
+      "Villarreal": "Villarreal",
+      "Deportivo de la Coruna": "Deportivo de la Coruna",
+      "Malaga": "Malaga",
+      "Racing Santander": "Racing Santander"
     }
   }
 }

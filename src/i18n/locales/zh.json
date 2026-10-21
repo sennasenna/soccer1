@@ -98,7 +98,6 @@
       "Bournemouth": "伯恩茅斯",
       "Brentford": "布伦特福德",
       "Brighton & Hove Albion": "布莱顿",
-      "Burnley": "伯恩利",
       "Chelsea": "切尔西",
       "Crystal Palace": "水晶宫",
       "Everton": "埃弗顿",
@@ -111,8 +110,9 @@
       "Nottingham Forest": "诺丁汉森林",
       "Sunderland": "桑德兰",
       "Tottenham Hotspur": "托特纳姆热刺",
-      "West Ham United": "西汉姆联",
-      "Wolverhampton Wanderers": "狼队"
+      "Coventry City": "考文垂",
+      "Ipswich Town": "伊普斯维奇",
+      "Hull City": "赫尔城"
     },
     "France Ligue Ⅰ": {
       "Angers": "昂热",
@@ -124,15 +124,15 @@
       "Lorient": "洛里昂",
       "Lyon": "里昂",
       "Marseille": "马赛",
-      "Metz": "梅斯",
       "Monaco": "摩纳哥",
-      "Nantes": "南特",
       "Nice": "尼斯",
       "Paris FC": "巴黎足球会",
       "Paris Saint-Germain": "巴黎圣日尔曼",
       "Rennes": "雷恩",
       "Strasbourg": "斯特拉斯堡",
-      "Toulouse": "图卢兹"
+      "Toulouse": "图卢兹",
+      "Troyes": "特鲁瓦",
+      "Le Mans": "勒芒"
     },
     "Germany Bundesliga": {
       "1899 Hoffenheim": "霍芬海姆",
@@ -144,15 +144,15 @@
       "Eintracht Frankfurt": "法兰克福",
       "Freiburg": "弗赖堡",
       "Hamburger": "汉堡",
-      "Heidenheim": "海登海姆",
       "Koln": "科隆",
       "Mainz 05": "美因茨",
       "RB Leipzig": "RB莱比锡",
-      "St Pauli": "圣保利",
       "Stuttgart": "斯图加特",
       "Union Berlin": "柏林联合",
       "Werder Bremen": "云达不莱梅",
-      "Wolfsburg": "沃尔夫斯堡"
+      "Paderborn 07": "帕德博恩",
+      "Elversberg": "埃弗斯堡",
+      "Schalke 04": "沙尔克04"
     },
     "Italy Serie A": {
       "AC Milan": "AC米兰",
@@ -160,7 +160,6 @@
       "Bologna": "博洛尼亚",
       "Cagliari": "卡利亚里",
       "Como": "科莫",
-      "Cremonese": "克雷莫纳",
       "Fiorentina": "佛罗伦萨",
       "Genoa": "热那亚",
       "Inter Milan": "国际米兰",
@@ -169,12 +168,13 @@
       "Lecce": "莱切",
       "Napoli": "那不勒斯",
       "Parma": "帕尔马",
-      "Pisa": "比萨",
       "Roma": "罗马",
       "Sassuolo": "萨索洛",
       "Torino": "都灵",
       "Udinese": "乌迪内斯",
-      "Verona": "维罗纳"
+      "Frosinone": "弗洛西诺尼",
+      "Venezia": "威尼斯",
+      "Monza": "蒙扎"
     },
     "Spain Primera Liga": {
       "Alaves": "阿拉维斯",
@@ -185,18 +185,18 @@
       "Elche": "埃尔切",
       "Espanyol": "西班牙人",
       "Getafe": "赫塔菲",
-      "Girona": "赫罗纳",
       "Levante": "莱万特",
-      "Mallorca": "马洛卡",
       "Osasuna": "奥萨苏纳",
       "Real Betis": "皇家贝蒂斯",
       "Real Madrid": "皇家马德里",
-      "Real Oviedo": "皇家奥维耶多",
       "Real Sociedad": "皇家社会",
       "Sevilla": "塞维利亚",
       "Valencia": "巴伦西亚",
       "Vallecano": "巴列卡诺",
-      "Villarreal": "比利亚雷亚尔"
+      "Villarreal": "比利亚雷亚尔",
+      "Deportivo de la Coruna": "拉科鲁尼亚",
+      "Malaga": "马拉加",
+      "Racing Santander": "桑坦德竞技"
     }
   }
 }
