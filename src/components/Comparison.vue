@@ -202,7 +202,7 @@ const { t } = useI18n()
 const getTeamName = (league, teamName) => {
   try {
     // 使用方括号访问法处理包含点号的团队名称
-    return t(`teams.${league}.${teamName}`)
+    return t(`teams.${league}["${teamName}"]`)
   } catch (error) {
     // 如果找不到翻译，返回原始名称
     return teamName
